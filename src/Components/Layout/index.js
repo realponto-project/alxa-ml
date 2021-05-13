@@ -10,45 +10,15 @@ import styles from './style.module.css'
 
 import {
   DotChartOutlined,
-  ShrinkOutlined,
-  BlockOutlined,
-  CalculatorOutlined,
-  TeamOutlined,
-  DiffOutlined
 } from '@ant-design/icons'
 
 const { Sider, Content } = Layout
 const menuItems = [
   {
     icon: <DotChartOutlined />,
-    label: 'Resumo',
-    key: '/logged/dashboard'
+    label: 'Anúncios',
+    key: '/logged/ads/manager'
   },
-  {
-    icon: <TeamOutlined />,
-    label: 'Clientes',
-    key: '/logged/customer/manager'
-  },
-  {
-    icon: <BlockOutlined />,
-    label: 'Produtos',
-    key: '/logged/product/manager'
-  },
-  {
-    icon: <CalculatorOutlined />,
-    label: 'Ponto de venda',
-    key: '/pdv'
-  },
-  {
-    icon: <ShrinkOutlined />,
-    label: 'Ordens',
-    key: '/logged/order/manager'
-  },
-  // {
-  //   icon: <DiffOutlined />,
-  //   label: 'Ordens consolidadas',
-  //   key: '/logged/order/report'
-  // }
 ]
 
 const LayoutComponent = ({ children, history, location, company, subscription }) => {
