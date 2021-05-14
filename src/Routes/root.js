@@ -3,6 +3,7 @@ import UpdateMyPassword from '../Pages/UpdateMyPassword'
 import MyTeam from '../Pages/MyTeam'
 import Onboarding from '../Pages/Onboarding'
 import MyInfo from '../Pages/MyInfo'
+import Accounts from '../Pages/Accounts'
 
 const RootRoutes = [
   {
@@ -35,6 +36,13 @@ const RootRoutes = [
     component: AdsManager,
     title: 'ANÚNCIOS',
     path: '/logged/ads/manager',
+    exact: true,
+    goBack: false
+  },
+  {
+    component: Accounts,
+    title: 'CONTAS VINCULADAS',
+    path: '/logged/account/manager',
     exact: true,
     goBack: false
   },

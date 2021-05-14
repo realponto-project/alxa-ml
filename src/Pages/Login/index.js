@@ -22,7 +22,7 @@ const Login = ({
   const [loading, setLoading] = useState(false)
 
   const authentication = (values) => {
-    let redirectPage = '/logged/dashboard'
+    let redirectPage = '/logged/ads/manager'
     setLoading(true)
     Auth(values)
       .then(({ data }) => {

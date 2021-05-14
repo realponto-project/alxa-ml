@@ -3,7 +3,7 @@ import { Image, Menu, Layout } from 'antd'
 import { withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { compose, pathOr } from 'ramda'
-import Logo from '../../Assets/logo.svg'
+import Logo from '../../Assets/alxaML.svg'
 import LogoPlus from '../../Assets/alxa-plus.svg'
 import AdSide from '../../Components/AdSide'
 import styles from './style.module.css'
@@ -52,7 +52,7 @@ const LayoutComponent = ({ children, history, location, company, subscription })
             className={styles.noPrint}
             style={{
               position: 'relative',
-              width: '150px',
+              width: '210px',
               height: '79px',
               margin: 'auto'
             }}
@@ -85,7 +85,9 @@ const LayoutComponent = ({ children, history, location, company, subscription })
           ))}
         </Menu>
         {location.pathname.replace('/logged/', '') !== 'plans' &&
-          subscription && subscription.status === 'free' && <AdSide className={styles.noPrint} />}
+          subscription && subscription.status === 'free' 
+          && 
+          <AdSide className={styles.noPrint} />}
       </Sider>
       <Layout>
         <Content

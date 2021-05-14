@@ -7,7 +7,7 @@ import { compose } from 'ramda'
 import styles from './style.module.css'
 import Plan from '../../Containers/Plans'
 
-import Deliveries from './deliveries.svg'
+import Deliveries from '../../Assets/ads.svg'
 
 const { Title } = Typography
 const AdSide = ({ plans }) => {
@@ -32,22 +32,22 @@ const AdSide = ({ plans }) => {
       <Image
         style={{
           position: 'relative',
-          top: '-37px'
+          top: '-07px'
         }}
         preview={false}
         width={220}
         src={Deliveries}
       />
-      <Title level={4} style={{ paddingBottom: '4px' }}>
-        Gestão completa!
+      <Title level={4} style={{ padding: '10px 0 4px 0' }}>
+        Atualização
       </Title>
       <p>
-        Acesso completo e ilimitado, gerencie seu <b>estoque</b> e suas{' '}
-        <b>manutenções</b>
+        Atualize seus anúncios de forma <b>fácil</b> e
+        <b> prática</b> com alguns cliques.
       </p>
-      <Button onClick={() => setIsVisible(true)} type="primary" block>
+      {/* <Button onClick={() => setIsVisible(true)} type="primary" block>
         Assine agora <b> {price}</b>
-      </Button>
+      </Button> */}
     </div>
   )
 }

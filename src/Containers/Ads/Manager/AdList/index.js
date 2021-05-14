@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table, Button, Empty, ConfigProvider, Image, Progress } from 'antd'
+import { Table, Empty, ConfigProvider, Image, Progress } from 'antd'
 import {map} from 'ramda'
 import NoData from '../../../../Assets/noData.svg'
 
@@ -41,15 +41,15 @@ const data = [{
   item_id: 'MLB1278896773',
   sku: 'C-320510',
   title: 'Placa S.al. 12x12 Inflamavel C320510',
-  price: 8.89,
-  status: 'activated'
+  price: `R$ ${8.89}`,
+  status: 'Ativo'
 },
 {
   item_id: 'MLB1278896774',
   sku: 'C-320512',
   title: 'Placa S.al. 12x12 Inflamavel C320510',
-  price: 12.89,
-  status: 'activated'
+  price: `R$ ${81.89}`,
+  status: 'Ativo'
 }]
 
 

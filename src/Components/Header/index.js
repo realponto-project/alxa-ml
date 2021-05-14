@@ -33,6 +33,9 @@ const Header = ({
       <Menu.Item key="/logged/account-myteam">
         Gerenciamento de equipe
       </Menu.Item>
+      <Menu.Item key="/logged/account/manager">
+        Contas vinculadas
+      </Menu.Item>
       <Menu.Item key="/logged/account-password">Alterar senha</Menu.Item>
       <Menu.Item key="/logged/config/status">Configurações</Menu.Item>
       <Menu.Item key="loggout">Sair</Menu.Item>

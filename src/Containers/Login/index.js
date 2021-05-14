@@ -3,7 +3,7 @@ import { Button, Col, Form, Image, Input, Row, Typography } from 'antd'
 import { Link } from 'react-router-dom'
 
 import onlineResume from '../../Assets/onlineResume.svg'
-import logo from '../../Assets/logo.svg'
+import logo from '../../Assets/alxaML.svg'
 import styles from './style.module.css'
 
 const { Paragraph } = Typography
@@ -48,7 +48,7 @@ const Login = ({
 
       <Col span={8}>
         <Row justify="center" gutter={[0, 87]}>
-          <Image width={160} src={logo} preview={false} />
+          <Image width={270} src={logo} preview={false} />
         </Row>
 
         <Row justify="center">
