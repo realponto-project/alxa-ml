@@ -1,0 +1,19 @@
+.title{
+  margin-top: 20px;
+  text-align: center;
+  font-family: 'Lato', sans-serif;
+  font-style: normal;
+  font-size: 2rem; 
+  font-weight: 800;
+  line-height: 55px;
+  color: #1890FF
+}
+
+.text{
+  text-align: center;
+  font-family: 'Lato', sans-serif;
+  font-style: normal;
+  font-size: 1rem; 
+  font-weight: 400;
+  white-space: pre-line;
+}
