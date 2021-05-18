@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import AccountsContainer from '../../Containers/Accounts'
 
 const appId = process.env.REACT_APP_APP_ID_ML
@@ -24,12 +24,12 @@ const Accounts = () => {
     console.log(url)
   }
 
-  const onChangeTable = ({current}) => {
+  const onChangeTable = ({ current }) => {
     setPage(current)
   }
 
   return (
-    <AccountsContainer 
+    <AccountsContainer
       onChangeTable={onChangeTable}
       goToMl={goToMl}
       loading={loading}
