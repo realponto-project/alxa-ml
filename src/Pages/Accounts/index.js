@@ -1,7 +1,6 @@
-import { compose, split } from 'ramda'
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { adjust, compose, findIndex, merge, propEq } from 'ramda'
+import { adjust, compose, findIndex, merge, propEq, split } from 'ramda'
 import { useLocation } from 'react-router-dom'
 
 import AccountsContainer from '../../Containers/Accounts'
