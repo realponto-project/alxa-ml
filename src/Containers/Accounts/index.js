@@ -13,7 +13,8 @@ const Accounts = ({
   loading,
   page,
   modalSuccessLinkIsVisible,
-  handleCancelModalSuccessLink
+  handleCancelModalSuccessLink,
+  source
 }) => {
   return (
     <Row gutter={[8, 16]}>
@@ -36,36 +37,6 @@ const Accounts = ({
           </Row>
         </Card>
       </Col>
-      <Col span={24}>
-        <Card bordered={false}>
-          <Row gutter={[8, 8]}>
-            <Col span={18}>
-              <Input
-                placeholder="Filtre por conta"
-                prefix={<SearchOutlined />}
-                name="name"
-                // value={filters.name}
-                // onChange={handleOnChange}
-              />
-            </Col>
-
-            <Col span={6} style={{ textAlign: 'right' }}>
-              <Button
-                style={{ marginRight: '16px' }}
-                // onClick={clearFilters}
-              >
-                Limpar filtros
-              </Button>
-              <Button
-                type="primary"
-                // onClick={handleGetUsersByFilters}
-              >
-                Filtrar
-              </Button>
-            </Col>
-          </Row>
-        </Card>
-      </Col>
 
       <Col span={24}>
         <Card bordered={false}>
@@ -73,6 +44,7 @@ const Accounts = ({
             onChangeTable={onChangeTable}
             loading={loading}
             page={page}
+            datasource={source}
           />
         </Card>
       </Col>

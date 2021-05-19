@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom'
 
 import AccountsContainer from '../../Containers/Accounts'
 import { createAccountService } from '../../Services/Link'
+import { getAllAccountML } from '../../Services/ML'
 
 const appId = process.env.REACT_APP_APP_ID_ML
 const uri = process.env.REACT_APP_URI_ML
@@ -16,17 +17,23 @@ const Accounts = ({ setToken }) => {
   const [modalSuccessLinkIsVisible, setModalSuccessLinkIsVisible] = useState(
     false
   )
+  const [source, setSource] = useState([])
   const location = useLocation()
+  
 
-  const falseLoading = async () => {
+  const getAllAccount = async () => {
     await setLoading(true)
+    
+    try {
+      const {data} = await getAllAccountML()
+      setSource(data)
+    } catch (error) {}
 
     await setLoading(false)
   }
 
   const goToMl = () => {
     window.open(url)
-    console.log(url)
   }
 
   const onChangeTable = ({ current }) => {
@@ -34,7 +41,7 @@ const Accounts = ({ setToken }) => {
   }
 
   useEffect(() => {
-    falseLoading()
+    getAllAccount()
   }, [page])
 
   useEffect(() => {
@@ -60,6 +67,7 @@ const Accounts = ({ setToken }) => {
     <AccountsContainer
       onChangeTable={onChangeTable}
       goToMl={goToMl}
+      source={source}
       loading={loading}
       page={page}
       modalSuccessLinkIsVisible={modalSuccessLinkIsVisible}
