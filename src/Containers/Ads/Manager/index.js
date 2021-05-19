@@ -57,6 +57,48 @@ const MyUploadXlsx = ({ reference }) => (
   </>
 )
 
+const schema = {
+  SKU: {
+    prop: 'sku',
+    type: String
+  },
+  PRICE: {
+    prop: 'price',
+    type: Number
+  }
+}
+
+const MyUploadXlsx = ({ reference }) => (
+  <>
+    <label htmlFor="upload-xlsx" className="ant-btn">
+      <UploadOutlined /> importar planilha para atualizar preços
+    </label>
+    <input
+      ref={reference}
+      id="upload-xlsx"
+      type="file"
+      style={{ display: 'none' }}
+      onChange={() => {
+        readXlsxFile(reference.current.files[0], { schema }).then(function ({
+          rows,
+          errors
+        }) {
+          const skuList = []
+          const priceList = []
+
+          console.log('erros', errors)
+          console.log('rows', rows)
+          rows.forEach(({ sku, price }) => {
+            skuList.push(sku)
+            priceList.push(price)
+          })
+          console.log({ skuList, priceList })
+        })
+      }}
+    />
+  </>
+)
+
 const Manager = ({
   handleClickEdit,
   loading,
@@ -182,7 +224,7 @@ const Manager = ({
           Selecione a conta que os anúncios serão carregados
         </Title>
         <Select
-          defaultValue={accounts.length > 0 && accounts[0].id}
+          allowClear
           onChange={handleChangeAccount}
           style={{ width: '100%' }}>
           {map(

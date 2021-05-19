@@ -60,10 +60,6 @@ const Accounts = ({ setToken }) => {
   }
 
   useEffect(() => {
-    getAllAccount()
-  }, [page])
-
-  useEffect(() => {
     const createAccount = async () => {
       const {
         status,
@@ -93,6 +89,8 @@ const Accounts = ({ setToken }) => {
       modalSuccessLinkIsVisible={modalSuccessLinkIsVisible}
       handleCancelModalSuccessLink={() => setModalSuccessLinkIsVisible(false)}
       updateToken={updateToken}
+      modalSuccessLinkIsVisible={modalSuccessLinkIsVisible}
+      handleCancelModalSuccessLink={() => setModalSuccessLinkIsVisible(false)}
     />
   )
 }
