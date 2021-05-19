@@ -4,33 +4,17 @@ import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
 
 import AccountList from './AccountList'
 import ModalSuccessLink from '../../Components/Links/sucessLink'
-import { useLocation } from 'react-router-dom'
-import { createAccountService } from '../../Services/Link'
-import { split } from 'ramda'
 
 const { Title } = Typography
 
-const Accounts = ({ onChangeTable, goToMl, loading, page, source, updateToken }) => {
-  const [modalSuccessLinkIsVisible, setModalSuccessLinkIsVisible] = useState(
-    false
-  )
-  const location = useLocation()
-
-  useEffect(() => {
-    const createAccount = async () => {
-      const { status } = await createAccountService({ code })
-      if (status === 201) {
-        setModalSuccessLinkIsVisible(true)
-      }
-    }
-    
-    const [, code] = split('=', location.search)
-    if (code) {
-      createAccount()
-    }
-  }, [])
-  
-
+const Accounts = ({
+  onChangeTable,
+  goToMl,
+  loading,
+  page,
+  modalSuccessLinkIsVisible,
+  handleCancelModalSuccessLink
+}) => {
   return (
     <Row gutter={[8, 16]}>
       <Col span={24}>
@@ -66,7 +50,7 @@ const Accounts = ({ onChangeTable, goToMl, loading, page, source, updateToken })
       </Col>
 
       <ModalSuccessLink
-        handleCancel={() => setModalSuccessLinkIsVisible(false)}
+        handleCancel={handleCancelModalSuccessLink}
         isVisible={modalSuccessLinkIsVisible}
       />
     </Row>

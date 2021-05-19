@@ -1,34 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import {
-  applySpec,
-  compose,
-  isEmpty,
-  isNil,
-  map,
-  path,
-  pathOr,
-  pipe
-} from 'ramda'
+import { isNil, pathOr } from 'ramda'
 import { Form } from 'antd'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
+import { getAll, getCusmtomerById } from '../../../Services/Ads'
 import {
-  getAll,
-  getCusmtomerById,
-  createCustomer,
-  updateCustomer
-} from '../../../Services/Customer'
-import {
-  buildAddCustomer,
-  buildFormValuesCustomer
-} from '../../../utils/Specs/Customer'
+  getAllAccounts,
+  getLoaderAdsByMlAccountId
+} from '../../../Services/mercadoLibre'
+import { buildFormValuesCustomer } from '../../../utils/Specs/Customer'
 
-const Manager = ({
-  cleanCustomerSearch,
-  customerSearch,
-  setCustomerSearch
-}) => {
+const Manager = () => {
+  const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(false)
   const [expand, setExpand] = useState(false)
   const [formAdd] = Form.useForm()
@@ -37,27 +20,14 @@ const Manager = ({
   const [visibleModalAdd, setVisibleModalAdd] = useState(false)
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(10)
+  const [mlAccountId, setMlAccountId] = useState('')
 
-  useEffect(() => {
-    getAllCustomers()
-  }, [page])
-
-  const getAllCustomers = async () => {
-    const value = customerSearch.search_name_or_document
-
+  const getAllAds = async () => {
     setLoading(true)
 
-    let query = {}
-
-    if (!isEmpty(value)) {
-      query = {
-        name: value,
-        document: value.replace(/\D/g, '')
-      }
-    }
-
     try {
-      const { data } = await getAll({ ...query, page, limit: 10 })
+      const { data } = await getAll({ page, limit: 10 })
+      console.log(data)
       setSource(data.source)
       setTotal(data.total)
     } catch (error) {}
@@ -65,16 +35,8 @@ const Manager = ({
     setLoading(false)
   }
 
-  const onChangeTable = ({current}) => {
+  const onChangeTable = ({ current }) => {
     setPage(current)
-  }
-
-  const onChangeSearch = ({ target }) => {
-    setCustomerSearch({ search_name_or_document: target.value })
-  }
-
-  const clearFilters = () => {
-    cleanCustomerSearch()
   }
 
   const closeModalAdd = () => {
@@ -85,37 +47,6 @@ const Manager = ({
   }
 
   const handleClickExpand = () => setExpand(!expand)
-
-  const handleSubmitAdd = async (formData) => {
-    setLoading(true)
-    const customerValues = buildAddCustomer(expand)(formData)
-    try {
-      if (isNil(id)) {
-        await createCustomer(customerValues)
-      } else {
-        await updateCustomer({ ...customerValues, id })
-      }
-
-      getAllCustomers()
-      closeModalAdd()
-      setLoading(false)
-    } catch (err) {
-      setLoading(false)
-      console.error(err)
-
-      const errors = pathOr([], ['response', 'data', 'errors'], err)
-
-      formAdd.setFields(
-        map(
-          applySpec({
-            errors: pipe(path(['message']), Array),
-            name: pipe(path(['field']), Array)
-          }),
-          errors
-        )
-      )
-    }
-  }
 
   const handleClickEdit = async (id) => {
     try {
@@ -132,27 +63,30 @@ const Manager = ({
     }
   }
 
-  const handleFilter = () => {
-    if(page !== 1){
-      setPage(1)
-    } else {
-      getAllCustomers()
-    }
+  const handleSubmitSync = async () => {
+    if (!mlAccountId) return
+
+    getLoaderAdsByMlAccountId(mlAccountId).then((response) => {
+      console.log(response)
+    })
   }
+
+  useEffect(() => {
+    getAllAds()
+  }, [page])
+
+  useEffect(() => {
+    getAllAccounts().then(({ data }) => setAccounts(data))
+  }, [])
 
   return (
     <ManagerContainer
-      clearFilters={clearFilters}
       closeModalAdd={closeModalAdd}
       expand={expand}
-      filters={customerSearch}
       formAdd={formAdd}
       handleClickEdit={handleClickEdit}
       handleClickExpand={handleClickExpand}
-      handleFilter={handleFilter}
-      handleSubmitAdd={handleSubmitAdd}
       modelTitle={isNil(id) ? 'Cadastro cliente' : 'Atualizar cliente'}
-      onChangeSearch={onChangeSearch}
       openModalAdd={() => setVisibleModalAdd(true)}
       source={source}
       visibleModalAdd={visibleModalAdd}
@@ -160,20 +94,11 @@ const Manager = ({
       onChangeTable={onChangeTable}
       total={total}
       page={page}
+      accounts={accounts}
+      handleSubmitSync={handleSubmitSync}
+      handleChangeAccount={(id) => setMlAccountId(id)}
     />
   )
 }
 
-const mapStateToProps = ({ customerSearch }) => ({
-  customerSearch
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  setCustomerSearch: (payload) =>
-    dispatch({ type: 'SET_CUSTOMER_GLOBAL_SEARCH', payload }),
-  cleanCustomerSearch: () => dispatch({ type: 'CLEAN_CUSTOMER_GLOBAL_SEARCH' })
-})
-
-const enhanced = compose(connect(mapStateToProps, mapDispatchToProps))
-
-export default enhanced(Manager)
+export default Manager
