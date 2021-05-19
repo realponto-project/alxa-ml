@@ -1,17 +1,22 @@
+import { compose, split } from 'ramda'
 import React, { useState, useEffect } from 'react'
+import { connect } from 'react-redux'
+import { useLocation } from 'react-router-dom'
+
 import AccountsContainer from '../../Containers/Accounts'
+import { createAccountService } from '../../Services/Link'
 
 const appId = process.env.REACT_APP_APP_ID_ML
 const uri = process.env.REACT_APP_URI_ML
 const url = `http://auth.mercadolivre.com.br/authorization?response_type=code&client_id=${appId}&redirect_uri=${uri}`
 
-const Accounts = () => {
+const Accounts = ({ setToken }) => {
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
-
-  useEffect(() => {
-    falseLoading()
-  }, [page])
+  const [modalSuccessLinkIsVisible, setModalSuccessLinkIsVisible] = useState(
+    false
+  )
+  const location = useLocation()
 
   const falseLoading = async () => {
     await setLoading(true)
@@ -28,14 +33,45 @@ const Accounts = () => {
     setPage(current)
   }
 
+  useEffect(() => {
+    falseLoading()
+  }, [page])
+
+  useEffect(() => {
+    const createAccount = async () => {
+      const {
+        status,
+        data: { token }
+      } = await createAccountService({ code })
+
+      if (status === 201) {
+        setModalSuccessLinkIsVisible(true)
+        setToken({ token })
+      }
+    }
+
+    const [, code] = split('=', location.search)
+    if (code) {
+      createAccount()
+    }
+  }, [])
+
   return (
     <AccountsContainer
       onChangeTable={onChangeTable}
       goToMl={goToMl}
       loading={loading}
       page={page}
+      modalSuccessLinkIsVisible={modalSuccessLinkIsVisible}
+      handleCancelModalSuccessLink={() => setModalSuccessLinkIsVisible(false)}
     />
   )
 }
 
-export default Accounts
+const mapDispatchToProps = (dispatch) => ({
+  setToken: (payload) => dispatch({ type: 'USER_LOGGED', payload })
+})
+
+const enhanced = compose(connect(null, mapDispatchToProps))
+
+export default enhanced(Accounts)

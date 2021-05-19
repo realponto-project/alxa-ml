@@ -1,33 +1,82 @@
-import React from 'react'
-import { Button, Card, Col, Input, Row, Typography, Upload, Checkbox } from 'antd'
+import React, { useRef, useState } from 'react'
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  Row,
+  Typography,
+  Checkbox,
+  Select,
+  Modal
+} from 'antd'
 import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
+import readXlsxFile from 'read-excel-file'
+import { map } from 'ramda'
 
 import AdList from './AdList'
 
 const CheckboxGroup = Checkbox.Group
 const { Title } = Typography
+const { Option } = Select
 const plainOptions = ['Ativo', 'Inativo']
 
+const schema = {
+  SKU: {
+    prop: 'sku',
+    type: String
+  },
+  PRICE: {
+    prop: 'price',
+    type: Number
+  }
+}
+
+const MyUploadXlsx = ({ reference }) => (
+  <>
+    <label htmlFor="upload-xlsx" className="ant-btn">
+      <UploadOutlined /> importar planilha para atualizar preços
+    </label>
+    <input
+      ref={reference}
+      id="upload-xlsx"
+      type="file"
+      style={{ display: 'none' }}
+      onChange={() => {
+        readXlsxFile(reference.current.files[0], { schema }).then(function ({
+          rows,
+          errors
+        }) {
+          const skuList = []
+          const priceList = []
+
+          console.log('erros', errors)
+          console.log('rows', rows)
+          rows.forEach(({ sku, price }) => {
+            skuList.push(sku)
+            priceList.push(price)
+          })
+          console.log({ skuList, priceList })
+        })
+      }}
+    />
+  </>
+)
+
 const Manager = ({
-  clearFilters,
-  closeModalAdd,
-  expand,
-  filters,
-  formAdd,
   handleClickEdit,
-  handleClickExpand,
-  handleFilter,
-  handleSubmitAdd,
   loading,
-  modelTitle,
-  onChangeSearch,
-  openModalAdd,
   source,
-  visibleModalAdd,
   onChangeTable,
   total,
-  page
-}) => (
+  page,
+  accounts,
+  handleChangeAccount,
+  handleSubmitSync
+}) => {
+  const [modalSyncIsVisible, setModalSyncIsVisible] = useState(false)
+  const inputEl = useRef(null)
+  return (
     <Row gutter={[8, 16]}>
       <Col span={24}>
         <Card bordered={false}>
@@ -35,18 +84,20 @@ const Manager = ({
             <Col span={12}>
               <Title style={{ marginBottom: 0 }} level={4}>
                 Atualize e transmita seus anúncios
-            </Title>
-              <p style={{ marginBottom: 0 }}>Importe sua planilha com os valores atualizados</p>
+              </Title>
+              <p style={{ marginBottom: 0 }}>
+                Importe sua planilha com os valores atualizados
+              </p>
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
-              <Upload>
-                <Button
-                  onClick={openModalAdd}
-                  style={{ marginRight: '16px' }}
-                  icon={<UploadOutlined />}>
-                  Importar planilha
-              </Button>
-              </Upload>
+              <Row>
+                <MyUploadXlsx reference={inputEl} />
+              </Row>
+              <Row>
+                <Button onClick={() => setModalSyncIsVisible(true)}>
+                  Carregar meus anúncios
+                </Button>
+              </Row>
             </Col>
           </Row>
         </Card>
@@ -59,26 +110,19 @@ const Manager = ({
                 name="search_name_or_document"
                 placeholder="Filtre por sku ou descrição"
                 prefix={<SearchOutlined />}
-                value={filters.search_name_or_document}
-                onChange={onChangeSearch}
               />
             </Col>
             <Col span={4} style={{ paddingTop: '5px' }}>
               <CheckboxGroup
                 options={plainOptions}
-                value={filters.activated}
                 // onChange={(value) =>
                 //   handleOnChange({ target: { name: 'activated', value } })
                 // }
               />
             </Col>
             <Col span={6} style={{ textAlign: 'right' }}>
-              <Button style={{ marginRight: '16px' }} onClick={clearFilters}>
-                Limpar filtros
-            </Button>
-              <Button type="primary" onClick={handleFilter}>
-                Filtrar
-            </Button>
+              <Button style={{ marginRight: '16px' }}>Limpar filtros</Button>
+              <Button type="primary">Filtrar</Button>
             </Col>
           </Row>
         </Card>
@@ -91,10 +135,33 @@ const Manager = ({
             total={total}
             handleClickEdit={handleClickEdit}
             loading={loading}
-            page={page} />
+            page={page}
+          />
         </Card>
       </Col>
+
+      <Modal
+        visible={modalSyncIsVisible}
+        title={'Caregar anúncios'}
+        onCancel={() => setModalSyncIsVisible(false)}
+        onOk={handleSubmitSync}>
+        <Title level={5}>
+          Selecione a conta que os anúncios serão carregados
+        </Title>
+        <Select
+          allowClear
+          onChange={handleChangeAccount}
+          style={{ width: '100%' }}>
+          {map(
+            ({ fullname, id }) => (
+              <Option value={id}>{fullname}</Option>
+            ),
+            accounts
+          )}
+        </Select>
+      </Modal>
     </Row>
   )
+}
 
 export default Manager
