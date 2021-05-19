@@ -10,7 +10,7 @@ import { split } from 'ramda'
 
 const { Title } = Typography
 
-const Accounts = ({ onChangeTable, goToMl, loading, page, match }) => {
+const Accounts = ({ onChangeTable, goToMl, loading, page, source }) => {
   const [modalSuccessLinkIsVisible, setModalSuccessLinkIsVisible] = useState(
     false
   )
@@ -19,17 +19,17 @@ const Accounts = ({ onChangeTable, goToMl, loading, page, match }) => {
   useEffect(() => {
     const createAccount = async () => {
       const { status } = await createAccountService({ code })
-
       if (status === 201) {
         setModalSuccessLinkIsVisible(true)
       }
     }
-
+    
     const [, code] = split('=', location.search)
     if (code) {
       createAccount()
     }
   }, [])
+  
 
   return (
     <Row gutter={[8, 16]}>
@@ -52,36 +52,6 @@ const Accounts = ({ onChangeTable, goToMl, loading, page, match }) => {
           </Row>
         </Card>
       </Col>
-      <Col span={24}>
-        <Card bordered={false}>
-          <Row gutter={[8, 8]}>
-            <Col span={18}>
-              <Input
-                placeholder="Filtre por conta"
-                prefix={<SearchOutlined />}
-                name="name"
-                // value={filters.name}
-                // onChange={handleOnChange}
-              />
-            </Col>
-
-            <Col span={6} style={{ textAlign: 'right' }}>
-              <Button
-                style={{ marginRight: '16px' }}
-                // onClick={clearFilters}
-              >
-                Limpar filtros
-              </Button>
-              <Button
-                type="primary"
-                // onClick={handleGetUsersByFilters}
-              >
-                Filtrar
-              </Button>
-            </Col>
-          </Row>
-        </Card>
-      </Col>
 
       <Col span={24}>
         <Card bordered={false}>
@@ -89,6 +59,7 @@ const Accounts = ({ onChangeTable, goToMl, loading, page, match }) => {
             onChangeTable={onChangeTable}
             loading={loading}
             page={page}
+            datasource={source}
           />
         </Card>
       </Col>

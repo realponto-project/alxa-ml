@@ -1,24 +1,16 @@
 import React from 'react'
-import { Table, Empty, ConfigProvider, Image, Progress } from 'antd'
+import { Table, Empty, ConfigProvider, Image } from 'antd'
 import {map} from 'ramda'
 import NoData from '../../../Assets/noData.svg'
 
 const columns = () => [
   {
     title: 'Conta',
-    dataIndex: 'account',
-    key: 'account',
+    dataIndex: 'fullname',
+    key: 'fullname',
     fixed: 'left',
   },
 ]
-
-const data = [{
-  account: 'LMS FERRAMENTAS SBC',
-},
-{
-  account: 'SÃO BERNARDO DO CAMPO FERRAMENTAS',
-},]
-
 
 const AccountList = ({ datasource, loading, onChangeTable, page}) => {
   return (
@@ -32,7 +24,7 @@ const AccountList = ({ datasource, loading, onChangeTable, page}) => {
         onChange={onChangeTable}
         columns={columns()} 
         loading={loading} 
-        dataSource={map((dataArray) => ({...dataArray, key: dataArray.id}), data)} />
+        dataSource={map((dataArray) => ({...dataArray, key: dataArray.id}), datasource)} />
     </ConfigProvider>
   )
 }
