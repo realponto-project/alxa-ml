@@ -97,6 +97,7 @@ const Manager = () => {
       accounts={accounts}
       handleSubmitSync={handleSubmitSync}
       handleChangeAccount={(id) => setMlAccountId(id)}
+      mlAccountId={mlAccountId}
     />
   )
 }
