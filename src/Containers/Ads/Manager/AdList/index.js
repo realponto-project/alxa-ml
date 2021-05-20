@@ -19,25 +19,29 @@ const columns = ({ handleClickEdit }) => [
     title: 'Preço',
     dataIndex: 'price',
     key: 'price',
-    fixed: 'left'
+    fixed: 'left',
+    render: (price) =>
+      price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
   },
   {
     title: 'Progresso',
     dataIndex: '',
     key: 'price',
     fixed: 'left',
-    render: () => (
-      <Progress
-        percent={100}
-        steps={3}
-        strokeColor="#52c41a"
-        format={(value) => 3}
-      />
-    )
+    render: (_, { totalAccountAd, typeSyncTrue }) => {
+      return (
+        <Progress
+          percent={typeSyncTrue/totalAccountAd*100}
+          steps={totalAccountAd}
+          strokeColor="#52c41a"
+          format={() => `${typeSyncTrue}/${totalAccountAd}`}
+        />
+      )
+    }
   },
   {
     title: 'Status',
-    dataIndex: 'status',
+    dataIndex: 'mercado_libre_account_ads.status',
     key: 'status',
     fixed: 'left'
   }
