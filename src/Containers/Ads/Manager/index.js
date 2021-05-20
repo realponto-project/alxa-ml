@@ -6,9 +6,9 @@ import {
   Input,
   Row,
   Typography,
-  Checkbox,
   Select,
-  Modal
+  Modal,
+  Form
 } from 'antd'
 import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
 import readXlsxFile from 'read-excel-file'
@@ -16,10 +16,8 @@ import { map } from 'ramda'
 
 import AdList from './AdList'
 
-const CheckboxGroup = Checkbox.Group
 const { Title } = Typography
 const { Option } = Select
-const plainOptions = ['Ativo', 'Inativo']
 
 const schema = {
   SKU: {
@@ -45,18 +43,13 @@ const MyUploadXlsx = ({ reference }) => (
       onChange={() => {
         readXlsxFile(reference.current.files[0], { schema }).then(function ({
           rows,
-          errors
         }) {
           const skuList = []
           const priceList = []
-
-          console.log('erros', errors)
-          console.log('rows', rows)
           rows.forEach(({ sku, price }) => {
             skuList.push(sku)
             priceList.push(price)
           })
-          console.log({ skuList, priceList })
         })
       }}
     />
@@ -72,10 +65,31 @@ const Manager = ({
   page,
   accounts,
   handleChangeAccount,
-  handleSubmitSync
+  handleSubmitSync,
 }) => {
   const [modalSyncIsVisible, setModalSyncIsVisible] = useState(false)
   const inputEl = useRef(null)
+  const [formSearch] = Form.useForm()
+
+  const handleChangeForm = (values) => {
+    const { name, value } = values
+    
+    formSearch.setFieldsValue({
+      ...formSearch,
+      [name]: value
+    })
+  
+    console.log(values)
+  }
+
+  const clearForm = () => {
+    formSearch.resetFields()
+  }
+
+  const onFinish = (values) => {
+    console.log(values)
+  }
+
   return (
     <Row gutter={[8, 16]}>
       <Col span={24}>
@@ -90,10 +104,10 @@ const Manager = ({
               </p>
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
-              <Row>
+              <Row justify="end">
                 <MyUploadXlsx reference={inputEl} />
               </Row>
-              <Row>
+              <Row justify="end">
                 <Button onClick={() => setModalSyncIsVisible(true)}>
                   Carregar meus anúncios
                 </Button>
@@ -104,27 +118,59 @@ const Manager = ({
       </Col>
       <Col span={24}>
         <Card bordered={false}>
-          <Row gutter={[8, 8]}>
-            <Col span={14}>
-              <Input
-                name="search_name_or_document"
-                placeholder="Filtre por sku ou descrição"
-                prefix={<SearchOutlined />}
-              />
-            </Col>
-            <Col span={4} style={{ paddingTop: '5px' }}>
-              <CheckboxGroup
-                options={plainOptions}
-                // onChange={(value) =>
-                //   handleOnChange({ target: { name: 'activated', value } })
-                // }
-              />
-            </Col>
-            <Col span={6} style={{ textAlign: 'right' }}>
-              <Button style={{ marginRight: '16px' }}>Limpar filtros</Button>
-              <Button type="primary">Filtrar</Button>
-            </Col>
-          </Row>
+          <Form
+            form={formSearch}
+            initialValues={{status: ""}}
+            onValuesChange={handleChangeForm}
+            onFinish={onFinish}
+          >
+            <Row gutter={[8, 8]}>
+              <Col span={14}>
+                <Form.Item name="account" >
+                  <Select
+                    // onChange={handleChangeAccount}
+                    defaultValue={accounts.length > 0 && accounts[0].id}
+                    style={{ width: '100%' }}>
+                    {map(
+                      ({ fullname, id }) => (
+                        <Option value={id}>{fullname}</Option>
+                      ),
+                      accounts
+                    )}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={10} style={{ paddingTop: '5px' }}>
+                <Form.Item name="status" >
+                  <Select
+                    defaultValue=""
+                    style={{ width: '100%' }}>
+                    <Option value="">TODOS</Option>
+                    <Option value="active">ATIVOS</Option>
+                    <Option value="payment_required">PAGAMENTO REQUIRIDO</Option>
+                    <Option value="under_review">SOB REVISÃO</Option>
+                    <Option value="paused">PAUSADO</Option>
+                    <Option value="closed">FECHADO</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={18} >
+                <Form.Item name="ads" >
+                  <Input
+                    name="search_name_or_document"
+                    placeholder="Filtre por sku ou descrição"
+                    prefix={<SearchOutlined />}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={6} style={{ textAlign: 'right' }}>
+                <Form.Item>
+                  <Button style={{ marginRight: '16px' }} onClick={clearForm}>Limpar filtros</Button>
+                  <Button type="primary" htmlType="submit">Filtrar</Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Form>
         </Card>
       </Col>
       <Col span={24}>
@@ -149,7 +195,7 @@ const Manager = ({
           Selecione a conta que os anúncios serão carregados
         </Title>
         <Select
-          allowClear
+          defaultValue={accounts.length > 0 && accounts[0].id }
           onChange={handleChangeAccount}
           style={{ width: '100%' }}>
           {map(
