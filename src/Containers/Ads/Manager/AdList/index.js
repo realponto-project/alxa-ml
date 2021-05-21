@@ -1,6 +1,6 @@
 import React from 'react'
-import { Table, Empty, ConfigProvider, Image, Progress } from 'antd'
-import NoData from '../../../../Assets/noData.svg'
+import { Table, Progress } from 'antd'
+import { mlStatus } from '../../../../utils/orderStatus'
 
 const columns = ({ handleClickEdit }) => [
   {
@@ -21,7 +21,11 @@ const columns = ({ handleClickEdit }) => [
     key: 'price',
     fixed: 'left',
     render: (price) =>
-      price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    sorter: {
+      compare: (a, b) => a.price - b.price,
+      multiple: 3
+    }
   },
   {
     title: 'Progresso',
@@ -31,7 +35,7 @@ const columns = ({ handleClickEdit }) => [
     render: (_, { totalAccountAd, typeSyncTrue }) => {
       return (
         <Progress
-          percent={typeSyncTrue/totalAccountAd*100}
+          percent={(typeSyncTrue / totalAccountAd) * 100}
           steps={totalAccountAd}
           strokeColor="#52c41a"
           format={() => `${typeSyncTrue}/${totalAccountAd}`}
@@ -43,7 +47,8 @@ const columns = ({ handleClickEdit }) => [
     title: 'Status',
     dataIndex: 'mercado_libre_account_ads.status',
     key: 'status',
-    fixed: 'left'
+    fixed: 'left',
+    render: (status) => mlStatus[status]
   }
 ]
 

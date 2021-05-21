@@ -183,4 +183,18 @@ const parseStatusToType = {
   free_market_with_analysis_return: 'inputs'
 }
 
-export { translateStatus, statusColors, orderStatus, parseStatusToType }
+const mlStatus = {
+  active: 'Ativo',
+  payment_required: 'Pagamento requerido',
+  under_review: 'Sob revisão',
+  paused: 'Pausado',
+  closed: 'Fechado'
+}
+
+export {
+  translateStatus,
+  statusColors,
+  orderStatus,
+  parseStatusToType,
+  mlStatus
+}
