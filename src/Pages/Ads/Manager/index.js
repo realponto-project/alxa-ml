@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { isNil, pathOr } from 'ramda'
+import { isNil, length, pathOr } from 'ramda'
 import { Form } from 'antd'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
@@ -19,14 +19,17 @@ const Manager = () => {
   const [source, setSource] = useState([])
   const [visibleModalAdd, setVisibleModalAdd] = useState(false)
   const [page, setPage] = useState(1)
+  const [order, setOrder] = useState([])
   const [total, setTotal] = useState(10)
   const [mlAccountId, setMlAccountId] = useState('')
+  const [formSearch] = Form.useForm()
+  const [formValues, setFormValues] = useState({})
 
   const getAllAds = async () => {
     setLoading(true)
 
     try {
-      const { data } = await getAll({ page, limit: 10 })
+      const { data } = await getAll({ ...formValues, order, page, limit: 10 })
       console.log(data)
       setSource(data.source)
       setTotal(data.total)
@@ -35,7 +38,13 @@ const Manager = () => {
     setLoading(false)
   }
 
-  const onChangeTable = ({ current }) => {
+  const onChangeTable = ({ current }, _, { order, columnKey }) => {
+    const formatOrder = {
+      descend: 'DESC',
+      ascend: 'ASC'
+    }
+
+    setOrder(order ? [[columnKey, formatOrder[order]]] : [])
     setPage(current)
   }
 
@@ -43,6 +52,7 @@ const Manager = () => {
     setId()
     setExpand(false)
     setVisibleModalAdd(false)
+    setOrder([])
     formAdd.resetFields()
   }
 
@@ -71,16 +81,37 @@ const Manager = () => {
     })
   }
 
-  useEffect(() => {
-    getAllAds()
-  }, [page])
+  const handleClearForm = () => {
+    formSearch.resetFields()
+    setPage(1)
+    setFormValues({ account: accounts[0]?.id })
+    formSearch.setFieldsValue({ account: accounts[0]?.id })
+  }
+
+  const handleSubmitForm = (formData) => {
+    setPage(1)
+    setFormValues(formData)
+  }
 
   useEffect(() => {
-    getAllAccounts().then(({ data }) => setAccounts(data))
+    getAllAds()
+  }, [page, formValues, order])
+
+  useEffect(() => {
+    getAllAccounts().then(({ data }) => {
+      setAccounts(data)
+      if (length(data) > 0) {
+        formSearch.setFieldsValue({ account: data[0]?.id })
+        setFormValues({ account: accounts[0]?.id })
+      }
+    })
   }, [])
 
   return (
     <ManagerContainer
+      formSearch={formSearch}
+      handleClearForm={handleClearForm}
+      handleSubmitForm={handleSubmitForm}
       closeModalAdd={closeModalAdd}
       expand={expand}
       formAdd={formAdd}
