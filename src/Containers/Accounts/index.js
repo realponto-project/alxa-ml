@@ -14,7 +14,8 @@ const Accounts = ({
   page,
   modalSuccessLinkIsVisible,
   handleCancelModalSuccessLink,
-  source
+  source,
+  updateToken
 }) => {
   return (
     <Row gutter={[8, 16]}>
@@ -45,6 +46,7 @@ const Accounts = ({
             loading={loading}
             page={page}
             datasource={source}
+            updateToken={updateToken}
           />
         </Card>
       </Col>

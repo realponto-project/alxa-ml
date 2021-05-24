@@ -4,4 +4,8 @@ const getAllAccountML = async () => {
   return await axiosIntance.get('/ml-accounts')
 }
 
-export { getAllAccountML }
+const refreshToken = async (id) => {
+  return await axiosIntance.put(`/ml-refreshToken/${id}`)
+}
+
+export { getAllAccountML, refreshToken }
