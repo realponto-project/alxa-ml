@@ -1,11 +1,12 @@
 import { compose, split } from 'ramda'
 import React, { useState, useEffect } from 'react'
 import { connect } from 'react-redux'
+import { adjust, compose, findIndex, merge, propEq } from 'ramda'
 import { useLocation } from 'react-router-dom'
 
 import AccountsContainer from '../../Containers/Accounts'
 import { createAccountService } from '../../Services/Link'
-import { getAllAccountML } from '../../Services/ML'
+import { getAllAccountML, refreshToken } from '../../Services/ML'
 
 const appId = process.env.REACT_APP_APP_ID_ML
 const uri = process.env.REACT_APP_URI_ML
@@ -30,6 +31,20 @@ const Accounts = ({ setToken }) => {
     } catch (error) {}
 
     await setLoading(false)
+  }
+
+  const updateToken = async (id) => {
+    const index = findIndex(propEq('id', id))(source)
+    setSource(adjust(index, merge({ loading: true }), source))
+    try{
+      const { data } = await refreshToken(id)
+
+      setToken(data)
+      getAllAccount()
+    }catch (error) {
+      console.error('Erro ao atualizar token')
+    }
+    setSource(adjust(index, merge({ loading: false }), source))
   }
 
   const goToMl = () => {
@@ -72,6 +87,7 @@ const Accounts = ({ setToken }) => {
       page={page}
       modalSuccessLinkIsVisible={modalSuccessLinkIsVisible}
       handleCancelModalSuccessLink={() => setModalSuccessLinkIsVisible(false)}
+      updateToken={updateToken}
     />
   )
 }
