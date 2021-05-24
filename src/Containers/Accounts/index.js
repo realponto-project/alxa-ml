@@ -10,7 +10,7 @@ import { split } from 'ramda'
 
 const { Title } = Typography
 
-const Accounts = ({ onChangeTable, goToMl, loading, page, source }) => {
+const Accounts = ({ onChangeTable, goToMl, loading, page, source, updateToken }) => {
   const [modalSuccessLinkIsVisible, setModalSuccessLinkIsVisible] = useState(
     false
   )
@@ -60,6 +60,7 @@ const Accounts = ({ onChangeTable, goToMl, loading, page, source }) => {
             loading={loading}
             page={page}
             datasource={source}
+            updateToken={updateToken}
           />
         </Card>
       </Col>
