@@ -220,6 +220,7 @@ const Manager = ({
         </Title>
         <Select
           allowClear
+          placeholder="Selecione uma conta"
           onChange={handleChangeAccount}
           style={{ width: '100%' }}>
           {map(
