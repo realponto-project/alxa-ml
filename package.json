@@ -1,6 +1,6 @@
 {
-  "name": "alxa-dash",
-  "version": "1.2.4",
+  "name": "alxa-ml-dash",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "4.3.0",

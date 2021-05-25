@@ -133,3 +133,22 @@ const Manager = ({
 }
 
 export default Manager
+
+
+
+
+
+
+
+
+
+// http://auth.mercadolivre.com.br/authorization?response_type=code&client_id=8630288114425012&redirect_uri=https://ml.alxa.com.br
+
+
+// 8630288114425012
+
+
+
+// TG-609e80fc2fde33000819cc00-185370744
+
+// TG-609d5067c552b600074655aa-185370744
