@@ -8,10 +8,10 @@ import {
   Typography,
   Select,
   Modal,
-  Form
+  Form,
+  Checkbox
 } from 'antd'
 import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
-import readXlsxFile from 'read-excel-file'
 import { keys, map } from 'ramda'
 
 import AdList from './AdList'
@@ -20,18 +20,7 @@ import { mlStatus } from '../../../utils/orderStatus'
 const { Title } = Typography
 const { Option } = Select
 
-const schema = {
-  SKU: {
-    prop: 'sku',
-    type: String
-  },
-  PRICE: {
-    prop: 'price',
-    type: Number
-  }
-}
-
-const MyUploadXlsx = ({ reference }) => (
+const MyUploadXlsx = ({ reference, handleChange }) => (
   <>
     <label htmlFor="upload-xlsx" className="ant-btn">
       <UploadOutlined /> importar planilha para atualizar preços
@@ -41,18 +30,7 @@ const MyUploadXlsx = ({ reference }) => (
       id="upload-xlsx"
       type="file"
       style={{ display: 'none' }}
-      onChange={() => {
-        readXlsxFile(reference.current.files[0], { schema }).then(function ({
-          rows
-        }) {
-          const skuList = []
-          const priceList = []
-          rows.forEach(({ sku, price }) => {
-            skuList.push(sku)
-            priceList.push(price)
-          })
-        })
-      }}
+      onChange={handleChange}
     />
   </>
 )
@@ -111,7 +89,8 @@ const Manager = ({
   handleSubmitSync,
   formSearch,
   handleClearForm,
-  handleSubmitForm
+  handleSubmitForm,
+  handleChangeUpload
 }) => {
   const [modalSyncIsVisible, setModalSyncIsVisible] = useState(false)
   const inputEl = useRef(null)
@@ -131,7 +110,10 @@ const Manager = ({
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
               <Row justify="end">
-                <MyUploadXlsx reference={inputEl} />
+                <MyUploadXlsx
+                  reference={inputEl}
+                  handleChange={() => handleChangeUpload(inputEl)}
+                />
               </Row>
               <Row justify="end">
                 <Button onClick={() => setModalSyncIsVisible(true)}>
@@ -146,10 +128,10 @@ const Manager = ({
         <Card bordered={false}>
           <Form
             form={formSearch}
-            initialValues={{ status: '' }}
+            initialValues={{ status: '', type_sync: [false, true] }}
             onFinish={handleSubmitForm}>
             <Row gutter={[8, 8]}>
-              <Col span={14}>
+              <Col span={8}>
                 <Form.Item name="account">
                   <Select style={{ width: '100%' }}>
                     {map(
@@ -161,7 +143,7 @@ const Manager = ({
                   </Select>
                 </Form.Item>
               </Col>
-              <Col span={10} style={{ paddingTop: '5px' }}>
+              <Col span={8} style={{ paddingTop: '5px' }}>
                 <Form.Item name="status">
                   <Select style={{ width: '100%' }}>
                     <Option value="">Todos</Option>
@@ -176,6 +158,19 @@ const Manager = ({
                   </Select>
                 </Form.Item>
               </Col>
+              <Col span={8}>
+                <Form.Item name="type_sync">
+                  <Checkbox.Group>
+                    <Checkbox value={true} style={{ lineHeight: '32px' }}>
+                      Preço atualizado
+                    </Checkbox>
+                    <Checkbox value={false} style={{ lineHeight: '32px' }}>
+                      Preço desatualizado
+                    </Checkbox>
+                  </Checkbox.Group>
+                </Form.Item>
+              </Col>
+
               <Col span={18}>
                 <Form.Item name="searchGlobal">
                   <Input

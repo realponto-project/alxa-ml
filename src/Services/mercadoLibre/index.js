@@ -7,3 +7,7 @@ export const getAllAccounts = async () => {
 export const getLoaderAdsByMlAccountId = async (mlAccountId) => {
   return await axiosIntance.get(`/ml-load-ads/${mlAccountId}`)
 }
+
+export const updateAds = async (values) => {
+  return await axiosIntance.put('/ml-ads/', values)
+}

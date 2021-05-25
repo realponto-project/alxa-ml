@@ -1,6 +1,14 @@
 import React from 'react'
-import { Table, Progress } from 'antd'
+import { Table, Progress, Tooltip } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
+
+const formatUpdateStatus = (status) =>
+  ({
+    updated: 'Atualizado',
+    unupdated: 'Desatualizado',
+    waiting_update: 'Aguardoando atualização',
+    error: 'Erro ao atualizar'
+  }[status])
 
 const columns = ({ handleClickEdit }) => [
   {
@@ -29,17 +37,21 @@ const columns = ({ handleClickEdit }) => [
   },
   {
     title: 'Progresso',
-    dataIndex: '',
-    key: 'price',
+    dataIndex: 'mercado_libre_account_ads.update_status',
     fixed: 'left',
-    render: (_, { totalAccountAd, typeSyncTrue }) => {
+    render: (
+      update_status,
+      { totalAccountAd, typeSyncTrue, mercado_libre_account_ads }
+    ) => {
       return (
-        <Progress
-          percent={(typeSyncTrue / totalAccountAd) * 100}
-          steps={totalAccountAd}
-          strokeColor="#52c41a"
-          format={() => `${typeSyncTrue}/${totalAccountAd}`}
-        />
+        <Tooltip title={formatUpdateStatus(update_status)}>
+          <Progress
+            percent={(typeSyncTrue / totalAccountAd) * 100}
+            steps={totalAccountAd}
+            strokeColor="#52c41a"
+            format={() => `${typeSyncTrue}/${totalAccountAd}`}
+          />
+        </Tooltip>
       )
     }
   },

@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     'react/prop-types': [0],
     'react/display-name': [0],
-    'multiline-ternary': 0
+    'multiline-ternary': 0,
+    camelcase: 0
   }
 }
