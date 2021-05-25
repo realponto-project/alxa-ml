@@ -23,9 +23,9 @@ const Accounts = ({ setToken }) => {
 
   const getAllAccount = async () => {
     await setLoading(true)
-    
+
     try {
-      const {data} = await getAllAccountML()
+      const { data } = await getAllAccountML()
       setSource(data)
     } catch (error) {}
 
@@ -35,12 +35,12 @@ const Accounts = ({ setToken }) => {
   const updateToken = async (id) => {
     const index = findIndex(propEq('id', id))(source)
     setSource(adjust(index, merge({ loading: true }), source))
-    try{
+    try {
       const { data } = await refreshToken(id)
 
-      setToken(data)
+      setToken({ token: data })
       getAllAccount()
-    }catch (error) {
+    } catch (error) {
       console.error('Erro ao atualizar token')
     }
     setSource(adjust(index, merge({ loading: false }), source))
