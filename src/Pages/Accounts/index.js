@@ -71,6 +71,7 @@ const Accounts = ({ setToken }) => {
     if (code) {
       createAccount()
     }
+    getAllAccount()
   }, [])
 
   return (
