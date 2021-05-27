@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import {
   Button,
   Card,
@@ -7,75 +7,19 @@ import {
   Row,
   Typography,
   Select,
-  Modal,
   Form,
   Checkbox
 } from 'antd'
-import { SearchOutlined, UploadOutlined } from '@ant-design/icons'
+import { SearchOutlined } from '@ant-design/icons'
 import { keys, map } from 'ramda'
 
 import AdList from './AdList'
 import { mlStatus } from '../../../utils/orderStatus'
+import ModalLoadAds from './ModalLoadAds'
+import ModaaUpdatePrices from './ModalUpdatePrice'
 
 const { Title } = Typography
 const { Option } = Select
-
-const MyUploadXlsx = ({ reference, handleChange }) => (
-  <>
-    <label htmlFor="upload-xlsx" className="ant-btn">
-      <UploadOutlined /> importar planilha para atualizar preços
-    </label>
-    <input
-      ref={reference}
-      id="upload-xlsx"
-      type="file"
-      style={{ display: 'none' }}
-      onChange={handleChange}
-    />
-  </>
-)
-
-const schema = {
-  SKU: {
-    prop: 'sku',
-    type: String
-  },
-  PRICE: {
-    prop: 'price',
-    type: Number
-  }
-}
-
-const MyUploadXlsx = ({ reference }) => (
-  <>
-    <label htmlFor="upload-xlsx" className="ant-btn">
-      <UploadOutlined /> importar planilha para atualizar preços
-    </label>
-    <input
-      ref={reference}
-      id="upload-xlsx"
-      type="file"
-      style={{ display: 'none' }}
-      onChange={() => {
-        readXlsxFile(reference.current.files[0], { schema }).then(function ({
-          rows,
-          errors
-        }) {
-          const skuList = []
-          const priceList = []
-
-          console.log('erros', errors)
-          console.log('rows', rows)
-          rows.forEach(({ sku, price }) => {
-            skuList.push(sku)
-            priceList.push(price)
-          })
-          console.log({ skuList, priceList })
-        })
-      }}
-    />
-  </>
-)
 
 const Manager = ({
   handleClickEdit,
@@ -85,16 +29,20 @@ const Manager = ({
   total,
   page,
   accounts,
-  handleChangeAccount,
+  formLoadAd,
   handleSubmitSync,
   formSearch,
   handleClearForm,
   handleSubmitForm,
-  handleChangeUpload
+  modalSyncIsVisible,
+  opneModalSync,
+  calcs,
+  closeModalSync,
+  modalUpdatePriceIsVisible,
+  closeModalUpdatePrice,
+  openModalUpdatePrice,
+  handleSubmitUpdatePrice
 }) => {
-  const [modalSyncIsVisible, setModalSyncIsVisible] = useState(false)
-  const inputEl = useRef(null)
-
   return (
     <Row gutter={[8, 16]}>
       <Col span={24}>
@@ -110,15 +58,10 @@ const Manager = ({
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
               <Row justify="end">
-                <MyUploadXlsx
-                  reference={inputEl}
-                  handleChange={() => handleChangeUpload(inputEl)}
-                />
+                <Button onClick={openModalUpdatePrice}>Atualizar preços</Button>
               </Row>
               <Row justify="end">
-                <Button onClick={() => setModalSyncIsVisible(true)}>
-                  Carregar meus anúncios
-                </Button>
+                <Button onClick={opneModalSync}>Carregar meus anúncios</Button>
               </Row>
             </Col>
           </Row>
@@ -136,7 +79,9 @@ const Manager = ({
                   <Select style={{ width: '100%' }}>
                     {map(
                       ({ fullname, id }) => (
-                        <Option value={id}>{fullname}</Option>
+                        <Option key={id} value={id}>
+                          {fullname}
+                        </Option>
                       ),
                       accounts
                     )}
@@ -210,27 +155,19 @@ const Manager = ({
         </Card>
       </Col>
 
-      <Modal
+      <ModalLoadAds
         visible={modalSyncIsVisible}
-        title={'Caregar anúncios'}
-        onCancel={() => setModalSyncIsVisible(false)}
-        onOk={handleSubmitSync}>
-        <Title level={5}>
-          Selecione a conta que os anúncios serão carregados
-        </Title>
-        <Select
-          allowClear
-          placeholder="Selecione uma conta"
-          onChange={handleChangeAccount}
-          style={{ width: '100%' }}>
-          {map(
-            ({ fullname, id }) => (
-              <Option value={id}>{fullname}</Option>
-            ),
-            accounts
-          )}
-        </Select>
-      </Modal>
+        close={closeModalSync}
+        form={formLoadAd}
+        onSubmit={handleSubmitSync}
+        accounts={accounts}
+      />
+      <ModaaUpdatePrices
+        visible={modalUpdatePriceIsVisible}
+        close={closeModalUpdatePrice}
+        onSubmit={handleSubmitUpdatePrice}
+        calcs={calcs}
+      />
     </Row>
   )
 }
