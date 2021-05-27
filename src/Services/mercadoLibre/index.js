@@ -4,8 +4,8 @@ export const getAllAccounts = async () => {
   return await axiosIntance.get('/ml-accounts')
 }
 
-export const getLoaderAdsByMlAccountId = async (mlAccountId) => {
-  return await axiosIntance.get(`/ml-load-ads/${mlAccountId}`)
+export const getLoaderAdsByMlAccountId = async (mlAccountId, params = {}) => {
+  return await axiosIntance.get(`/ml-load-ads/${mlAccountId}`, { params })
 }
 
 export const updateAds = async (values) => {
