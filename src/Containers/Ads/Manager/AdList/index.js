@@ -1,6 +1,7 @@
 import React from 'react'
 import { Table, Progress, Tooltip } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
+import { gte } from 'ramda'
 
 const formatUpdateStatus = (status) =>
   ({
@@ -15,13 +16,15 @@ const columns = ({ handleClickEdit }) => [
     title: 'SKU',
     dataIndex: 'sku',
     key: 'sku',
-    fixed: 'left'
+    fixed: 'left',
+    sorter: true
   },
   {
     title: 'Descrição',
     dataIndex: 'title',
     key: 'title',
-    fixed: 'left'
+    fixed: 'left',
+    sorter: true
   },
   {
     title: 'Preço',
@@ -30,10 +33,7 @@ const columns = ({ handleClickEdit }) => [
     fixed: 'left',
     render: (price) =>
       price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-    sorter: {
-      compare: (a, b) => a.price - b.price,
-      multiple: 3
-    }
+    sorter: true
   },
   {
     title: 'Progresso',
