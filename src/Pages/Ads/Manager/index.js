@@ -4,11 +4,11 @@ import { Form, message } from 'antd'
 import { connect } from 'react-redux'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
-import { getAll, getCusmtomerById } from '../../../Services/Ads'
+import { getAll, getCusmtomerById, updateAds } from '../../../Services/Ads'
 import {
   getAllAccounts,
   getLoaderAdsByMlAccountId,
-  updateAds
+  updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
 import { buildFormValuesCustomer } from '../../../utils/Specs/Customer'
@@ -133,7 +133,11 @@ const Manager = ({ tokenFcm }) => {
     })
 
     console.log({ skuList, priceList, calcPriceId })
-    updateAds({ skuList, priceList, calcPriceId })
+    updateAds({ rows, calcPriceId })
+  }
+
+  const handleClickUpdate = () => {
+    updateAdsByAccount(formSearch.getFieldValue('account'))
   }
 
   useEffect(() => {
@@ -181,6 +185,7 @@ const Manager = ({ tokenFcm }) => {
       closeModalUpdatePrice={() => setModalUpdatePriceIsVisible(false)}
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
+      handleClickUpdate={handleClickUpdate}
     />
   )
 }
