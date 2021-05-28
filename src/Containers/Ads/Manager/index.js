@@ -41,7 +41,8 @@ const Manager = ({
   modalUpdatePriceIsVisible,
   closeModalUpdatePrice,
   openModalUpdatePrice,
-  handleSubmitUpdatePrice
+  handleSubmitUpdatePrice,
+  handleClickUpdate
 }) => {
   return (
     <Row gutter={[8, 16]}>
@@ -144,6 +145,11 @@ const Manager = ({
       </Col>
       <Col span={24}>
         <Card bordered={false}>
+          <Row justify="end">
+            <Button onClick={handleClickUpdate} type="link">
+              Atualizar
+            </Button>
+          </Row>
           <AdList
             onChangeTable={onChangeTable}
             datasource={source}

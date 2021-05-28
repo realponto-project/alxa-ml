@@ -4,6 +4,10 @@ const getAll = async (params = {}) => {
   return await axiosIntance.get('/ml-ads', { params })
 }
 
+export const updateAds = async (values) => {
+  return await axiosIntance.put('/ml-ads/', values)
+}
+
 const getCusmtomerById = async (id) => {
   return await axiosIntance.get(`/customers/${id}`)
 }
