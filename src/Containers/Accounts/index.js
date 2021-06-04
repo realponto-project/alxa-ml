@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Row, Col, Card, Button, Typography, Input } from 'antd'
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import React from 'react'
+import { Row, Col, Card, Button, Typography } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 
 import AccountList from './AccountList'
 import ModalSuccessLink from '../../Components/Links/sucessLink'
@@ -14,8 +14,7 @@ const Accounts = ({
   page,
   modalSuccessLinkIsVisible,
   handleCancelModalSuccessLink,
-  source,
-  updateToken
+  source
 }) => {
   return (
     <Row gutter={[8, 16]}>
@@ -46,7 +45,6 @@ const Accounts = ({
             loading={loading}
             page={page}
             datasource={source}
-            updateToken={updateToken}
           />
         </Card>
       </Col>
