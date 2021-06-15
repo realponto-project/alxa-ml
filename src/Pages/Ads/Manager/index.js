@@ -7,7 +7,8 @@ import ManagerContainer from '../../../Containers/Ads/Manager'
 import { getAll, getCusmtomerById, updateAds } from '../../../Services/Ads'
 import {
   getAllAccounts,
-  getLoaderAdsByMlAccountId
+  getLoaderAdsByMlAccountId,
+  updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
 import { buildFormValuesCustomer } from '../../../utils/Specs/Customer'
@@ -123,17 +124,14 @@ const Manager = ({ tokenFcm }) => {
   }
 
   const handleSubmitUpdatePrice = ({ rows, calcPriceId }) => {
-    const skuList = []
-    const priceList = []
-
-    rows.forEach(({ sku, price }) => {
-      skuList.push(sku)
-      priceList.push(price)
-    })
-
-    console.log({ skuList, priceList, calcPriceId })
     updateAds({ rows, calcPriceId, tokenFcm })
+    // setModalUpdatePriceIsVisible(false)
   }
+
+  const handleClickUpdate = () => {
+    updateAdsByAccount(formSearch.getFieldValue('account'))
+  }
+
   useEffect(() => {
     getAllAds()
   }, [page, formValues, order])
@@ -143,11 +141,13 @@ const Manager = ({ tokenFcm }) => {
       setAccounts(data)
       if (length(data) > 0) {
         formSearch.setFieldsValue({ account: data[0]?.id })
-        setFormValues({ account: accounts[0]?.id })
+        setFormValues({ account: data[0]?.id })
       }
     })
 
-    getAllCalcPrice().then(({ data }) => setCalcs(data))
+    getAllCalcPrice().then(({ data }) =>
+      setCalcs([...data, { name: '=', id: '' }])
+    )
   }, [])
 
   return (
@@ -179,6 +179,7 @@ const Manager = ({ tokenFcm }) => {
       closeModalUpdatePrice={() => setModalUpdatePriceIsVisible(false)}
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
+      handleClickUpdate={handleClickUpdate}
     />
   )
 }

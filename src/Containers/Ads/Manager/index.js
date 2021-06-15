@@ -41,7 +41,8 @@ const Manager = ({
   modalUpdatePriceIsVisible,
   closeModalUpdatePrice,
   openModalUpdatePrice,
-  handleSubmitUpdatePrice,
+  handleClickUpdate,
+  handleSubmitUpdatePrice
 }) => {
   return (
     <Row gutter={[8, 16]}>
@@ -57,11 +58,17 @@ const Manager = ({
               </p>
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
-              <Row justify="end">
-                <Button onClick={openModalUpdatePrice}>Atualizar preços</Button>
-              </Row>
-              <Row justify="end">
-                <Button onClick={opneModalSync}>Carregar meus anúncios</Button>
+              <Row gutter={[0, 8]} justify="end">
+                <Col span={24}>
+                  <Button style={{ width: 200 }} onClick={opneModalSync}>
+                    Carregar meus anúncios
+                  </Button>
+                </Col>
+                <Col span={24}>
+                  <Button style={{ width: 200 }} onClick={openModalUpdatePrice}>
+                    Atualizar preços
+                  </Button>
+                </Col>
               </Row>
             </Col>
           </Row>
@@ -144,6 +151,11 @@ const Manager = ({
       </Col>
       <Col span={24}>
         <Card bordered={false}>
+          <Row justify="end">
+            <Button type="link" onClick={handleClickUpdate}>
+              Atualizar
+            </Button>
+          </Row>
           <AdList
             onChangeTable={onChangeTable}
             datasource={source}
