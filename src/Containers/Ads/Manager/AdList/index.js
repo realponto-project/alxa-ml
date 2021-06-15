@@ -1,15 +1,25 @@
 import React from 'react'
-import { Table, Progress, Tooltip } from 'antd'
+import { Table, Progress, Tag } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
 import { gte } from 'ramda'
 
-const formatUpdateStatus = (status) =>
-  ({
+const TagUpdateStatus = ({ status }) => {
+  const color = {
+    updated: 'lime',
+    unupdated: 'orange',
+    waiting_update: 'blue',
+    error: 'red'
+  }[status]
+
+  const value = {
     updated: 'Atualizado',
     unupdated: 'Desatualizado',
     waiting_update: 'Aguardoando atualização',
     error: 'Erro ao atualizar'
-  }[status])
+  }[status]
+  
+  return <Tag color={color} >{value}</Tag>
+}
 
 const columns = ({ handleClickEdit }) => [
   {
@@ -36,22 +46,32 @@ const columns = ({ handleClickEdit }) => [
     sorter: true
   },
   {
-    title: 'Progresso',
+    title: 'Status de atualização',
     dataIndex: 'mercado_libre_account_ads.update_status',
     fixed: 'left',
     render: (
       update_status,
+    ) => {
+      return (
+        <TagUpdateStatus status={update_status} />
+      )
+    }
+  },
+  {
+    title: 'Progresso',
+    dataIndex: 'mercado_libre_account_ads.id',
+    fixed: 'left',
+    render: (
+      _,
       { totalAccountAd, typeSyncTrue, mercado_libre_account_ads }
     ) => {
       return (
-        <Tooltip title={formatUpdateStatus(update_status)}>
-          <Progress
-            percent={(typeSyncTrue / totalAccountAd) * 100}
-            steps={totalAccountAd}
-            strokeColor="#52c41a"
-            format={() => `${typeSyncTrue}/${totalAccountAd}`}
-          />
-        </Tooltip>
+        <Progress
+          percent={(typeSyncTrue / totalAccountAd) * 100}
+          steps={totalAccountAd}
+          strokeColor="#52c41a"
+          format={() => `${typeSyncTrue}/${totalAccountAd}`}
+        />
       )
     }
   },

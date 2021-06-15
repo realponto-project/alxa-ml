@@ -16,13 +16,19 @@ const columns =  [
   },
 ]
 
-const AccountList = ({ datasource, loading, onChangeTable, page}) => {
-  return <Table 
-            pagination={{ current: page }}
-            onChange={onChangeTable}
-            columns={columns(updateToken)} 
-            loading={loading} 
-            dataSource={map((dataArray) => ({...dataArray, key: dataArray.id}), datasource)} />
-    }
+const AccountList = ({ datasource, loading, onChangeTable, page }) => {
+  return (
+    <Table
+      pagination={{ position: [] }}
+      onChange={onChangeTable}
+      columns={columns}
+      loading={loading}
+      dataSource={map(
+        (dataArray) => ({ ...dataArray, key: dataArray.id }),
+        datasource
+      )}
+    />
+  )
+}
 
 export default AccountList
