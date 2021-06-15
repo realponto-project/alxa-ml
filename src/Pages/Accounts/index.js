@@ -4,12 +4,8 @@ import { compose, split } from 'ramda'
 import { useLocation } from 'react-router-dom'
 
 import AccountsContainer from '../../Containers/Accounts'
-import { getAllAccountML, refreshToken } from '../../Services/ML'
-
-import { connect } from 'react-redux'
-import { adjust, compose, findIndex, merge, propEq } from 'ramda'
-import { createAccountService } from '../../Services/Link'
 import { getAllAccountML } from '../../Services/ML'
+import { createAccountService } from '../../Services/Link'
 
 const appId = process.env.REACT_APP_APP_ID_ML
 const uri = process.env.REACT_APP_URI_ML
@@ -22,7 +18,6 @@ const Accounts = ({ setToken }) => {
   const [modalSuccessLinkIsVisible, setModalSuccessLinkIsVisible] = useState(
     false
   )
-  const [source, setSource] = useState([])
   const location = useLocation()
 
   const getAllAccount = async () => {

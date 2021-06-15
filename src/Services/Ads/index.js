@@ -4,7 +4,7 @@ const getAll = async (params = {}) => {
   return await axiosIntance.get('/ml-ads', { params })
 }
 
-export const updateAds = async (values) => {
+const updateAds = async (values) => {
   return await axiosIntance.put('/ml-ads/', values)
 }
 
@@ -20,4 +20,4 @@ const updateCustomer = async (values) => {
   return await axiosIntance.put(`/customers/${values.id}`, values)
 }
 
-export { getAll, getCusmtomerById, createCustomer, updateCustomer }
+export { getAll, getCusmtomerById, createCustomer, updateCustomer, updateAds }
