@@ -66,7 +66,6 @@ const Accounts = ({ setToken }) => {
       source={source}
       loading={loading}
       page={page}
-      updateToken={updateToken}
       modalSuccessLinkIsVisible={modalSuccessLinkIsVisible}
       handleCancelModalSuccessLink={() => setModalSuccessLinkIsVisible(false)}
     />
