@@ -11,6 +11,7 @@ import formPdvReducer from './formPdv'
 import SubscriptionReducer from './subscription'
 import MyTeamReducer from './myTeam'
 import PlansReducer from './plans'
+import TokenFcmReducer from './tokenFcm'
 
 const appReducer = combineReducers({
   user: userReducer,
@@ -24,6 +25,7 @@ const appReducer = combineReducers({
   subscription: SubscriptionReducer,
   myTeamSearch: MyTeamReducer,
   plans: PlansReducer,
+  tokenFcm: TokenFcmReducer
 })
 
 

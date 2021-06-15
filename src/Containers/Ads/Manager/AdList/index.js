@@ -1,7 +1,25 @@
 import React from 'react'
-import { Table, Empty, ConfigProvider, Image, Progress } from 'antd'
-import {map} from 'ramda'
-import NoData from '../../../../Assets/noData.svg'
+import { Table, Progress, Tag } from 'antd'
+import { mlStatus } from '../../../../utils/orderStatus'
+import { gte } from 'ramda'
+
+const TagUpdateStatus = ({ status }) => {
+  const color = {
+    updated: 'lime',
+    unupdated: 'orange',
+    waiting_update: 'blue',
+    error: 'red'
+  }[status]
+
+  const value = {
+    updated: 'Atualizado',
+    unupdated: 'Desatualizado',
+    waiting_update: 'Aguardoando atualização',
+    error: 'Erro ao atualizar'
+  }[status]
+  
+  return <Tag color={color} >{value}</Tag>
+}
 
 const columns = ({ handleClickEdit }) => [
   {
@@ -9,64 +27,79 @@ const columns = ({ handleClickEdit }) => [
     dataIndex: 'sku',
     key: 'sku',
     fixed: 'left',
+    sorter: true
   },
   {
     title: 'Descrição',
     dataIndex: 'title',
     key: 'title',
-    fixed: 'left'
+    fixed: 'left',
+    sorter: true
   },
   {
     title: 'Preço',
     dataIndex: 'price',
     key: 'price',
-    fixed: 'left'
+    fixed: 'left',
+    render: (price) =>
+      price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    sorter: true
+  },
+  {
+    title: 'Status de atualização',
+    dataIndex: 'mercado_libre_account_ads.update_status',
+    fixed: 'left',
+    render: (
+      update_status,
+    ) => {
+      return (
+        <TagUpdateStatus status={update_status} />
+      )
+    }
   },
   {
     title: 'Progresso',
-    dataIndex: '',
-    key: 'price',
+    dataIndex: 'mercado_libre_account_ads.id',
     fixed: 'left',
-    render: () => (<Progress percent={100} steps={3}  strokeColor="#52c41a" format={value => 3} />)
+    render: (
+      _,
+      { totalAccountAd, typeSyncTrue, mercado_libre_account_ads }
+    ) => {
+      return (
+        <Progress
+          percent={(typeSyncTrue / totalAccountAd) * 100}
+          steps={totalAccountAd}
+          strokeColor="#52c41a"
+          format={() => `${typeSyncTrue}/${totalAccountAd}`}
+        />
+      )
+    }
   },
   {
     title: 'Status',
-    dataIndex: 'status',
+    dataIndex: 'mercado_libre_account_ads.status',
     key: 'status',
-    fixed: 'left'
-  },
+    fixed: 'left',
+    render: (status) => mlStatus[status]
+  }
 ]
 
-const data = [{
-  item_id: 'MLB1278896773',
-  sku: 'C-320510',
-  title: 'Placa S.al. 12x12 Inflamavel C320510',
-  price: `R$ ${8.89}`,
-  status: 'Ativo'
-},
-{
-  item_id: 'MLB1278896774',
-  sku: 'C-320512',
-  title: 'Placa S.al. 12x12 Inflamavel C320510',
-  price: `R$ ${81.89}`,
-  status: 'Ativo'
-}]
-
-
-const AdList = ({ datasource, handleClickEdit, loading, onChangeTable, total, page}) => {
+const AdList = ({
+  datasource,
+  handleClickEdit,
+  loading,
+  onChangeTable,
+  total,
+  page
+}) => {
   return (
-    <ConfigProvider renderEmpty={() => <Empty 
-      description="Não há dados" 
-      image={<Image width={85} src={NoData} preview={false} />}
-      />
-    }>
-      <Table 
-        pagination={{ total, current: page }}
-        onChange={onChangeTable}
-        columns={columns({ handleClickEdit })} 
-        loading={loading} 
-        dataSource={map((dataArray) => ({...dataArray, key: dataArray.id}), data)} />
-    </ConfigProvider>
+    <Table
+      pagination={{ total, current: page }}
+      onChange={onChangeTable}
+      columns={columns({ handleClickEdit })}
+      loading={loading}
+      dataSource={datasource}
+    />
   )
 }
 

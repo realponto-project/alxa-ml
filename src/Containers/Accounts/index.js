@@ -1,36 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { Row, Col, Card, Button, Typography, Input } from 'antd'
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons'
+import React from 'react'
+import { Row, Col, Card, Button, Typography } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
 
 import AccountList from './AccountList'
 import ModalSuccessLink from '../../Components/Links/sucessLink'
-import { useLocation } from 'react-router-dom'
-import { createAccountService } from '../../Services/Link'
-import { split } from 'ramda'
 
 const { Title } = Typography
 
-const Accounts = ({ onChangeTable, goToMl, loading, page, source, updateToken }) => {
-  const [modalSuccessLinkIsVisible, setModalSuccessLinkIsVisible] = useState(
-    false
-  )
-  const location = useLocation()
-
-  useEffect(() => {
-    const createAccount = async () => {
-      const { status } = await createAccountService({ code })
-      if (status === 201) {
-        setModalSuccessLinkIsVisible(true)
-      }
-    }
-    
-    const [, code] = split('=', location.search)
-    if (code) {
-      createAccount()
-    }
-  }, [])
-  
-
+const Accounts = ({
+  onChangeTable,
+  goToMl,
+  loading,
+  page,
+  modalSuccessLinkIsVisible,
+  handleCancelModalSuccessLink,
+  source
+}) => {
   return (
     <Row gutter={[8, 16]}>
       <Col span={24}>
@@ -60,13 +45,12 @@ const Accounts = ({ onChangeTable, goToMl, loading, page, source, updateToken })
             loading={loading}
             page={page}
             datasource={source}
-            updateToken={updateToken}
           />
         </Card>
       </Col>
 
       <ModalSuccessLink
-        handleCancel={() => setModalSuccessLinkIsVisible(false)}
+        handleCancel={handleCancelModalSuccessLink}
         isVisible={modalSuccessLinkIsVisible}
       />
     </Row>

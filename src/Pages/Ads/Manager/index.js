@@ -1,34 +1,20 @@
 import React, { useEffect, useState } from 'react'
+import { compose, isNil, length, map, pathOr } from 'ramda'
+import { Form, message } from 'antd'
 import { connect } from 'react-redux'
-import {
-  applySpec,
-  compose,
-  isEmpty,
-  isNil,
-  map,
-  path,
-  pathOr,
-  pipe
-} from 'ramda'
-import { Form } from 'antd'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
+import { getAll, getCusmtomerById, updateAds } from '../../../Services/Ads'
 import {
-  getAll,
-  getCusmtomerById,
-  createCustomer,
-  updateCustomer
-} from '../../../Services/Customer'
-import {
-  buildAddCustomer,
-  buildFormValuesCustomer
-} from '../../../utils/Specs/Customer'
+  getAllAccounts,
+  getLoaderAdsByMlAccountId,
+  updateAdsByAccount
+} from '../../../Services/mercadoLibre'
+import { getAllCalcPrice } from '../../../Services/CalcPrice'
+import { buildFormValuesCustomer } from '../../../utils/Specs/Customer'
 
-const Manager = ({
-  cleanCustomerSearch,
-  customerSearch,
-  setCustomerSearch
-}) => {
+const Manager = ({ tokenFcm }) => {
+  const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(false)
   const [expand, setExpand] = useState(false)
   const [formAdd] = Form.useForm()
@@ -36,86 +22,51 @@ const Manager = ({
   const [source, setSource] = useState([])
   const [visibleModalAdd, setVisibleModalAdd] = useState(false)
   const [page, setPage] = useState(1)
+  const [order, setOrder] = useState([])
   const [total, setTotal] = useState(10)
+  const [formSearch] = Form.useForm()
+  const [formLoadAd] = Form.useForm()
+  const [formValues, setFormValues] = useState({})
+  const [modalSyncIsVisible, setModalSyncIsVisible] = useState(false)
+  const [modalUpdatePriceIsVisible, setModalUpdatePriceIsVisible] = useState(
+    false
+  )
+  const [calcs, setCalcs] = useState([])
 
-  useEffect(() => {
-    getAllCustomers()
-  }, [page])
-
-  const getAllCustomers = async () => {
-    const value = customerSearch.search_name_or_document
-
+  const getAllAds = async () => {
     setLoading(true)
 
-    let query = {}
-
-    if (!isEmpty(value)) {
-      query = {
-        name: value,
-        document: value.replace(/\D/g, '')
-      }
-    }
-
     try {
-      const { data } = await getAll({ ...query, page, limit: 10 })
-      setSource(data.source)
+      const { data } = await getAll({ ...formValues, order, page, limit: 10 })
+      setSource(map((item) => ({ ...item, key: item.id }), data.source))
       setTotal(data.total)
     } catch (error) {}
 
     setLoading(false)
   }
 
-  const onChangeTable = ({current}) => {
-    setPage(current)
-  }
+  const onChangeTable = ({ current }, _, sorter) => {
+    const formatOrder = {
+      descend: 'DESC',
+      ascend: 'ASC'
+    }
 
-  const onChangeSearch = ({ target }) => {
-    setCustomerSearch({ search_name_or_document: target.value })
-  }
+    setOrder(
+      sorter.order ? [[sorter.columnKey, formatOrder[sorter.order]]] : []
+    )
 
-  const clearFilters = () => {
-    cleanCustomerSearch()
+    setPage(sorter.order ? 1 : current)
   }
 
   const closeModalAdd = () => {
     setId()
     setExpand(false)
     setVisibleModalAdd(false)
+    setOrder([])
     formAdd.resetFields()
   }
 
   const handleClickExpand = () => setExpand(!expand)
-
-  const handleSubmitAdd = async (formData) => {
-    setLoading(true)
-    const customerValues = buildAddCustomer(expand)(formData)
-    try {
-      if (isNil(id)) {
-        await createCustomer(customerValues)
-      } else {
-        await updateCustomer({ ...customerValues, id })
-      }
-
-      getAllCustomers()
-      closeModalAdd()
-      setLoading(false)
-    } catch (err) {
-      setLoading(false)
-      console.error(err)
-
-      const errors = pathOr([], ['response', 'data', 'errors'], err)
-
-      formAdd.setFields(
-        map(
-          applySpec({
-            errors: pipe(path(['message']), Array),
-            name: pipe(path(['field']), Array)
-          }),
-          errors
-        )
-      )
-    }
-  }
 
   const handleClickEdit = async (id) => {
     try {
@@ -132,48 +83,111 @@ const Manager = ({
     }
   }
 
-  const handleFilter = () => {
-    if(page !== 1){
-      setPage(1)
-    } else {
-      getAllCustomers()
-    }
+  const handleSubmitSync = async ({
+    mlAccountId,
+    lastSyncAds = '1990-01-01T00:00:00'
+  }) => {
+    if (!mlAccountId) return
+
+    getLoaderAdsByMlAccountId(mlAccountId, {
+      tokenFcm,
+      date: new Date(lastSyncAds)
+    }).then((response) => {
+      setModalSyncIsVisible(false)
+      if (response.status === 200) {
+        message.info(
+          <p>
+            Pode demorar um tempo até que os anúncios sejam carregados,
+            <br />
+            será enviado uma notificação assim que for concluído
+          </p>
+        )
+      }
+    })
   }
+
+  const handleClearForm = () => {
+    formSearch.resetFields()
+    setPage(1)
+    setFormValues({ account: accounts[0]?.id })
+    formSearch.setFieldsValue({ account: accounts[0]?.id })
+  }
+
+  const handleSubmitForm = (formData) => {
+    setPage(1)
+    setFormValues(formData)
+  }
+
+  const closeModalSync = () => {
+    formLoadAd.resetFields()
+    setModalSyncIsVisible(false)
+  }
+
+  const handleSubmitUpdatePrice = ({ rows, calcPriceId }) => {
+    updateAds({ rows, calcPriceId, tokenFcm })
+    // setModalUpdatePriceIsVisible(false)
+  }
+
+  const handleClickUpdate = () => {
+    updateAdsByAccount(formSearch.getFieldValue('account'))
+  }
+
+  useEffect(() => {
+    getAllAds()
+  }, [page, formValues, order])
+
+  useEffect(() => {
+    getAllAccounts().then(({ data }) => {
+      setAccounts(data)
+      if (length(data) > 0) {
+        formSearch.setFieldsValue({ account: data[0]?.id })
+        setFormValues({ account: data[0]?.id })
+      }
+    })
+
+    getAllCalcPrice().then(({ data }) =>
+      setCalcs([...data, { name: '=', id: '' }])
+    )
+  }, [])
 
   return (
     <ManagerContainer
-      clearFilters={clearFilters}
+      formLoadAd={formLoadAd}
+      accounts={accounts}
       closeModalAdd={closeModalAdd}
       expand={expand}
-      filters={customerSearch}
       formAdd={formAdd}
+      formSearch={formSearch}
+      handleClearForm={handleClearForm}
       handleClickEdit={handleClickEdit}
       handleClickExpand={handleClickExpand}
-      handleFilter={handleFilter}
-      handleSubmitAdd={handleSubmitAdd}
-      modelTitle={isNil(id) ? 'Cadastro cliente' : 'Atualizar cliente'}
-      onChangeSearch={onChangeSearch}
-      openModalAdd={() => setVisibleModalAdd(true)}
-      source={source}
-      visibleModalAdd={visibleModalAdd}
+      handleSubmitForm={handleSubmitForm}
+      handleSubmitSync={handleSubmitSync}
       loading={loading}
+      modelTitle={isNil(id) ? 'Cadastro cliente' : 'Atualizar cliente'}
+      modalSyncIsVisible={modalSyncIsVisible}
       onChangeTable={onChangeTable}
-      total={total}
+      openModalAdd={() => setVisibleModalAdd(true)}
       page={page}
+      source={source}
+      total={total}
+      visibleModalAdd={visibleModalAdd}
+      opneModalSync={() => setModalSyncIsVisible(true)}
+      closeModalSync={closeModalSync}
+      calcs={calcs}
+      modalUpdatePriceIsVisible={modalUpdatePriceIsVisible}
+      closeModalUpdatePrice={() => setModalUpdatePriceIsVisible(false)}
+      openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
+      handleSubmitUpdatePrice={handleSubmitUpdatePrice}
+      handleClickUpdate={handleClickUpdate}
     />
   )
 }
 
-const mapStateToProps = ({ customerSearch }) => ({
-  customerSearch
+const mapStateToProps = ({ tokenFcm }) => ({
+  tokenFcm
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  setCustomerSearch: (payload) =>
-    dispatch({ type: 'SET_CUSTOMER_GLOBAL_SEARCH', payload }),
-  cleanCustomerSearch: () => dispatch({ type: 'CLEAN_CUSTOMER_GLOBAL_SEARCH' })
-})
-
-const enhanced = compose(connect(mapStateToProps, mapDispatchToProps))
+const enhanced = compose(connect(mapStateToProps))
 
 export default enhanced(Manager)
