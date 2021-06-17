@@ -11,7 +11,7 @@ import NoData from './Assets/noData.svg'
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <ConfigProvider
         locale={ptBR}
         renderEmpty={() => (
@@ -22,7 +22,7 @@ ReactDOM.render(
         )}>
         <App />
       </ConfigProvider>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>,
   document.getElementById('root')
 )
