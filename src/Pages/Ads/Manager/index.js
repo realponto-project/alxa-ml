@@ -93,21 +93,22 @@ const Manager = ({ tokenFcm }) => {
     getLoaderAdsByMlAccountId(mlAccountId, {
       tokenFcm,
       date: new Date(lastSyncAds)
-    }).then((response) => {
-      setModalSyncIsVisible(false)
-      setLoading(false)
-      if (response.status === 200) {
-        message.info(
-          <p>
-            Pode demorar um tempo até que os anúncios sejam carregados,
-            <br />
-            será enviado uma notificação assim que for concluído
-          </p>
-        )
-      }
-    }).catch(err => { 
-      setLoading(false)
     })
+      .then((response) => {
+        setModalSyncIsVisible(false)
+        setLoading(false)
+        if (response.status === 200) {
+          message.info(
+            <p>
+              Pode demorar um tempo até que os anúncios sejam carregados,
+              <br />
+              será enviado uma notificação assim que for concluído
+            </p>
+          )
+        }
+      })
+      // eslint-disable-next-line node/handle-callback-err
+      .catch((err) => setLoading(false))
   }
 
   const handleClearForm = () => {

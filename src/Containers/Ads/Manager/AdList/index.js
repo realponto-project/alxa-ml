@@ -1,7 +1,6 @@
 import React from 'react'
-import { Table, Progress, Tag } from 'antd'
+import { Table, Tag } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
-import { gte } from 'ramda'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -17,8 +16,8 @@ const TagUpdateStatus = ({ status }) => {
     waiting_update: 'Aguardoando atualização',
     error: 'Erro ao atualizar'
   }[status]
-  
-  return <Tag color={color} >{value}</Tag>
+
+  return <Tag color={color}>{value}</Tag>
 }
 
 const columns = ({ handleClickEdit }) => [
@@ -49,32 +48,10 @@ const columns = ({ handleClickEdit }) => [
     title: 'Status de atualização',
     dataIndex: 'update_status',
     fixed: 'left',
-    render: (
-      update_status,
-    ) => {
-      return (
-        <TagUpdateStatus status={update_status} />
-      )
+    render: (update_status) => {
+      return <TagUpdateStatus status={update_status} />
     }
   },
-  // {
-  //   title: 'Progresso',
-  //   dataIndex: 'mercado_libre_account_ads.id',
-  //   fixed: 'left',
-  //   render: (
-  //     _,
-  //     { totalAccountAd, typeSyncTrue, mercado_libre_account_ads }
-  //   ) => {
-  //     return (
-  //       <Progress
-  //         percent={(typeSyncTrue / totalAccountAd) * 100}
-  //         steps={totalAccountAd}
-  //         strokeColor="#52c41a"
-  //         format={() => `${typeSyncTrue}/${totalAccountAd}`}
-  //       />
-  //     )
-  //   }
-  // },
   {
     title: 'Status',
     dataIndex: 'status',
