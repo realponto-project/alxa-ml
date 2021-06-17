@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import ptBR from 'antd/lib/locale/pt_BR'
 import { Empty, ConfigProvider, Image } from 'antd'
-import { HashRouter } from 'react-router-dom'
+import { HashRouter, BrowserRouter } from 'react-router-dom'
 
 import './index.css'
 import App from './App'
@@ -11,7 +11,7 @@ import NoData from './Assets/noData.svg'
 
 ReactDOM.render(
   <React.StrictMode>
-    <HashRouter>
+    <BrowserRouter>
       <ConfigProvider
         locale={ptBR}
         renderEmpty={() => (
@@ -22,7 +22,7 @@ ReactDOM.render(
         )}>
         <App />
       </ConfigProvider>
-    </HashRouter>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 )

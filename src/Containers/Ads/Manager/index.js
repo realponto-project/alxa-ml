@@ -172,6 +172,7 @@ const Manager = ({
         close={closeModalSync}
         form={formLoadAd}
         onSubmit={handleSubmitSync}
+        loading={loading}
         accounts={accounts}
       />
       <ModaaUpdatePrices

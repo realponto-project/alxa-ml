@@ -88,12 +88,14 @@ const Manager = ({ tokenFcm }) => {
     lastSyncAds = '1990-01-01T00:00:00'
   }) => {
     if (!mlAccountId) return
+    setLoading(true)
 
     getLoaderAdsByMlAccountId(mlAccountId, {
       tokenFcm,
       date: new Date(lastSyncAds)
     }).then((response) => {
       setModalSyncIsVisible(false)
+      setLoading(false)
       if (response.status === 200) {
         message.info(
           <p>
@@ -103,6 +105,8 @@ const Manager = ({ tokenFcm }) => {
           </p>
         )
       }
+    }).catch(err => { 
+      setLoading(false)
     })
   }
 
@@ -125,7 +129,7 @@ const Manager = ({ tokenFcm }) => {
 
   const handleSubmitUpdatePrice = ({ rows, calcPriceId }) => {
     updateAds({ rows, calcPriceId, tokenFcm })
-    // setModalUpdatePriceIsVisible(false)
+    setModalUpdatePriceIsVisible(false)
   }
 
   const handleClickUpdate = () => {

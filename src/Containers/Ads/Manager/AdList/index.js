@@ -47,7 +47,7 @@ const columns = ({ handleClickEdit }) => [
   },
   {
     title: 'Status de atualização',
-    dataIndex: 'mercado_libre_account_ads.update_status',
+    dataIndex: 'update_status',
     fixed: 'left',
     render: (
       update_status,
@@ -57,27 +57,27 @@ const columns = ({ handleClickEdit }) => [
       )
     }
   },
-  {
-    title: 'Progresso',
-    dataIndex: 'mercado_libre_account_ads.id',
-    fixed: 'left',
-    render: (
-      _,
-      { totalAccountAd, typeSyncTrue, mercado_libre_account_ads }
-    ) => {
-      return (
-        <Progress
-          percent={(typeSyncTrue / totalAccountAd) * 100}
-          steps={totalAccountAd}
-          strokeColor="#52c41a"
-          format={() => `${typeSyncTrue}/${totalAccountAd}`}
-        />
-      )
-    }
-  },
+  // {
+  //   title: 'Progresso',
+  //   dataIndex: 'mercado_libre_account_ads.id',
+  //   fixed: 'left',
+  //   render: (
+  //     _,
+  //     { totalAccountAd, typeSyncTrue, mercado_libre_account_ads }
+  //   ) => {
+  //     return (
+  //       <Progress
+  //         percent={(typeSyncTrue / totalAccountAd) * 100}
+  //         steps={totalAccountAd}
+  //         strokeColor="#52c41a"
+  //         format={() => `${typeSyncTrue}/${totalAccountAd}`}
+  //       />
+  //     )
+  //   }
+  // },
   {
     title: 'Status',
-    dataIndex: 'mercado_libre_account_ads.status',
+    dataIndex: 'status',
     key: 'status',
     fixed: 'left',
     render: (status) => mlStatus[status]
