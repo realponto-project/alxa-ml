@@ -66,12 +66,11 @@ const AdList = ({
   handleClickEdit,
   loading,
   onChangeTable,
-  total,
-  page
+  pagination
 }) => {
   return (
     <Table
-      pagination={{ total, current: page }}
+      pagination={pagination}
       onChange={onChangeTable}
       columns={columns({ handleClickEdit })}
       loading={loading}

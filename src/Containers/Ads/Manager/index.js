@@ -16,8 +16,6 @@ const Manager = ({
   loading,
   source,
   onChangeTable,
-  total,
-  page,
   accounts,
   formLoadAd,
   handleSubmitSync,
@@ -27,6 +25,7 @@ const Manager = ({
   modalSyncIsVisible,
   opneModalSync,
   calcs,
+  pagination,
   closeModalSync,
   modalUpdatePriceIsVisible,
   closeModalUpdatePrice,
@@ -156,10 +155,9 @@ const Manager = ({
           <AdList
             onChangeTable={onChangeTable}
             datasource={source}
-            total={total}
             handleClickEdit={handleClickEdit}
             loading={loading}
-            page={page}
+            pagination={pagination}
           />
         </Card>
       </Col>

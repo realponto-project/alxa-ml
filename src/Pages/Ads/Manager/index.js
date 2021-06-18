@@ -21,6 +21,7 @@ const Manager = ({ tokenFcm }) => {
   const [id, setId] = useState()
   const [source, setSource] = useState([])
   const [visibleModalAdd, setVisibleModalAdd] = useState(false)
+  const [limit, setLimit] = useState(10)
   const [page, setPage] = useState(1)
   const [order, setOrder] = useState([])
   const [total, setTotal] = useState(10)
@@ -37,7 +38,7 @@ const Manager = ({ tokenFcm }) => {
     setLoading(true)
 
     try {
-      const { data } = await getAll({ ...formValues, order, page, limit: 10 })
+      const { data } = await getAll({ ...formValues, order, page, limit })
       setSource(map((item) => ({ ...item, key: item.id }), data.source))
       setTotal(data.total)
     } catch (error) {}
@@ -45,17 +46,26 @@ const Manager = ({ tokenFcm }) => {
     setLoading(false)
   }
 
-  const onChangeTable = ({ current }, _, sorter) => {
+  const onChangeTable = ({ current, pageSize }, _, sorter, { action }) => {
     const formatOrder = {
       descend: 'DESC',
       ascend: 'ASC'
     }
 
-    setOrder(
-      sorter.order ? [[sorter.columnKey, formatOrder[sorter.order]]] : []
-    )
+    if(limit !== pageSize){
+      setLimit(pageSize)
+      setPage(1)
+    }
 
-    setPage(sorter.order ? 1 : current)
+    if( action === 'sort'){
+      setOrder(
+        sorter.order ? [[sorter.columnKey, formatOrder[sorter.order]]] : []
+      )
+      setPage(1)
+    } else {
+      setPage(current)
+    }
+
   }
 
   const closeModalAdd = () => {
@@ -157,6 +167,7 @@ const Manager = ({ tokenFcm }) => {
 
   return (
     <ManagerContainer
+      pagination={{ total, current: page, pageSize: limit }}
       formLoadAd={formLoadAd}
       accounts={accounts}
       closeModalAdd={closeModalAdd}
@@ -173,9 +184,8 @@ const Manager = ({ tokenFcm }) => {
       modalSyncIsVisible={modalSyncIsVisible}
       onChangeTable={onChangeTable}
       openModalAdd={() => setVisibleModalAdd(true)}
-      page={page}
       source={source}
-      total={total}
+      limit={limit}
       visibleModalAdd={visibleModalAdd}
       opneModalSync={() => setModalSyncIsVisible(true)}
       closeModalSync={closeModalSync}
