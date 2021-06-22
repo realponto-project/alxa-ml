@@ -45,8 +45,13 @@ const parseValuePTbr= value => {
     }
 
     if ( price.length === 1) {
+      return price.replace(/(\d{1})/, 'R$ 0,0$1')
+    }
+
+    if ( price.length === 2) {
       return price.replace(/(\d{1,2})/, 'R$ 0,$1')
     }
+    
     
     if ( price.length === 3) {
       return price.replace(/(\d{1})(\d{2})/, 'R$ $1,$2')

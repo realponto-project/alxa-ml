@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react'
 import moment from 'moment'
 import ClassNames from 'classnames'
-import { add, length, map, multiply, reduce } from 'ramda'
+import { add, isEmpty, length, map, multiply, pathOr, reduce } from 'ramda'
 
 import styles from './style.module.css'
 import { formatPrice } from '../../utils'
@@ -32,8 +32,8 @@ const paymentLabel = {
 }
 
 const Cupom = ({
-  company,
-  customer,
+  company = {},
+  customer = {},
   discount,
   items = [],
   payment,
@@ -48,10 +48,10 @@ const Cupom = ({
   )
 
   const maskDocument = (value) => {
-    if (length(value) <= 11) {
-      return mask('###.###.###-##')(value)
-    }
-    return mask('##.###.###/####-##')(value)
+    return {
+      11: mask('###.###.###-##')(value),
+      14: mask('##.###.###/####-##')(value)
+    }[length(value)]
   }
 
   const maskPhone = (value) => {
@@ -66,14 +66,14 @@ const Cupom = ({
       <tbody>
         <tr>
           <th className={styles.title} colSpan="3">
-            {company.name}
+            {pathOr('------------------', ['name'], company)}
           </th>
         </tr>
         <tr>
           <th colSpan="3">{moment(createdAt).format('DD/MM/YYYY - LTS')}</th>
         </tr>
         <tr className={styles.top3}>
-          <td colSpan="3">{customer.name}</td>
+          <td colSpan="3">{pathOr('Venda rápida', ['name'], customer)}</td>
         </tr>
         <tr className={styles.ttu}>
           <td colSpan="2">{maskDocument(customer.document)}</td>
@@ -81,17 +81,21 @@ const Cupom = ({
         <tr className={styles.ttu}>
           <td colSpan="2">{maskPhone(customer.phone)}</td>
         </tr>
-        <tr className={styles.top3}>
-          <td colSpan="3">Endereço</td>
-        </tr>
-        <tr className={ClassNames(styles.ttu)}>
-          <td colSpan="3">
-            {customer.street}, {customer.streetNumber},
-            <br />
-            {customer.neighborhood}, {customer.city} - {customer.states}
-            <br /> {customer.zipcode}
-          </td>
-        </tr>
+        {!isEmpty(customer.street) && (
+          <>
+            <tr className={styles.top3}>
+              <td colSpan="3">Endereço</td>
+            </tr>
+            <tr className={ClassNames(styles.ttu)}>
+              <td colSpan="3">
+                {customer.street}, {customer.streetNumber},
+                <br />
+                {customer.neighborhood}, {customer.city} - {customer.states}
+                <br /> {customer.zipcode}
+              </td>
+            </tr>
+          </>
+        )}
         <tr style={{ borderBottom: 'none' }}>
           <th
             className={styles.ttu}

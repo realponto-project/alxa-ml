@@ -20,6 +20,7 @@ const Manager = ({
   handleGetUsersByFilters,
   loading,
   onChangeTable,
+  handleClickMail,
   total,
   page
 }) => {
@@ -85,7 +86,7 @@ const Manager = ({
           <Row gutter={[8, 8]}>
             <Col span={13}>
               <Input
-                placeholder="Filtre por nome ou email."
+                placeholder="Filtre por nome ou email"
                 prefix={<SearchOutlined />}
                 name="name"
                 value={filters.name}
@@ -115,14 +116,16 @@ const Manager = ({
       </Col>
       <Col span={24}>
         <Card bordered={false}>
-          <UserList 
+          <UserList
             handleSubmitUpdate={handleSubmitUpdate}
             onChangeTable={onChangeTable}
-            datasource={users} 
-            chooseUser={handleChooseUser} 
-            loading={loading} 
+            datasource={users}
+            chooseUser={handleChooseUser}
+            loading={loading}
+            handleClickMail={handleClickMail}
             total={total}
-            page={page}/>
+            page={page}
+          />
         </Card>
       </Col>
     </Row>
@@ -130,3 +133,22 @@ const Manager = ({
 }
 
 export default Manager
+
+
+
+
+
+
+
+
+
+// http://auth.mercadolivre.com.br/authorization?response_type=code&client_id=8630288114425012&redirect_uri=https://ml.alxa.com.br
+
+
+// 8630288114425012
+
+
+
+// TG-609e80fc2fde33000819cc00-185370744
+
+// TG-609d5067c552b600074655aa-185370744

@@ -1,14 +1,14 @@
 import axios from 'axios'
 
-const baseURL = `${process.env.REACT_APP_API_URL}/api`
+export const baseURL = process.env.REACT_APP_API_URL
 
-const axiosInstance = axios.create({ baseURL })
+const axiosInstance = axios.create({ baseURL: `${baseURL}/api` })
 
 axiosInstance.interceptors.request.use((config) => ({
   ...config,
   headers: {
-    ...config.headers,
-    Authorization: `Bearer ${localStorage.getItem('token')}`
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+    ...config.headers
   }
 }))
 

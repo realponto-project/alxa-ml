@@ -26,7 +26,7 @@ const AdBanner = () => {
             de formar <b>fácil!</b>
           </p>
           <Button onClick={() => setIsVisible(true)} type="primary">
-            Assine Agora <b> R$9,99/mês</b>
+            Assine agora <b> R$9,99/mês</b>
           </Button>
         </Col>
         <Col

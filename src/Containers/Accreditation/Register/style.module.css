@@ -3,6 +3,8 @@
   font-style: normal;
   position: relative;
   padding:  0 44px;
+  background-color: #F2F2F3;
+  height: 100vh;
 }
 
 .contentPublicity span span {
@@ -28,14 +30,13 @@
 }
 
 .contentPublicity div.wrapperAllTheData{
-  bottom: 10%;
+  bottom: 40%;
   position: absolute;
   right: 0;
+  margin-right: 50px;
 }
 
-
 .contentForm {
-  background-color: #F2F2F3;
   height: 100vh;
-  padding: 50px
+  padding: 50px;
 }

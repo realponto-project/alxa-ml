@@ -30,3 +30,7 @@ body {
     display: block !important;
   }
 }
+
+.ant-carousel{
+  width: 100% !important;
+}

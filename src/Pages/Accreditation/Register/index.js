@@ -7,6 +7,7 @@ import { createCompany } from '../../../Services/Company'
 
 const buildCompany = applySpec({
   name: pathOr('', ['razaoSocial']),
+  nickName: pathOr('', ['nickName']),
   document: pathOr('', ['cnpj'])
 })
 const buildUser = applySpec({
@@ -37,9 +38,12 @@ const Register = ({ history }) => {
     }
   }
 
-  return <RegisterContainer
-    handleClickContinue={handleClickContinue}
-    loading={loading}/>
+  return (
+    <RegisterContainer
+      handleClickContinue={handleClickContinue}
+      loading={loading}
+    />
+  )
 }
 
 const enhanced = compose(withRouter)

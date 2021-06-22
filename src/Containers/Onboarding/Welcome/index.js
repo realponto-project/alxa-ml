@@ -55,8 +55,8 @@ const Welcome = () => {
             Segurança
           </Title>
           <Paragraph className={styles.textWelcome}>
-            Precisamos que você altere a sua senha atual por uma nova para que
-            você tenha mais segurança.
+          Precisamos que você crie uma senha para que você tenha mais
+            segurança.
           </Paragraph>
         </Col>
       </Row>

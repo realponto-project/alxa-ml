@@ -13,6 +13,7 @@ const Header = ({
   loggoutUser,
   user,
   unSubscribe,
+  showSettings,
 }) => {
   const handleNavegator = ({ key }) => {
     if (key === 'loggout') {
@@ -32,8 +33,10 @@ const Header = ({
       <Menu.Item key="/logged/account-myteam">
         Gerenciamento de equipe
       </Menu.Item>
+      <Menu.Item key="/logged/account/manager">
+        Contas vinculadas
+      </Menu.Item>
       <Menu.Item key="/logged/account-password">Alterar senha</Menu.Item>
-      <Menu.Item key="/logged/config/status">Configurações</Menu.Item>
       <Menu.Item key="loggout">Sair</Menu.Item>
     </Menu>
   )
@@ -66,15 +69,19 @@ const Header = ({
         </div>
       </Col>
       <Col span={12} style={{ textAlign: 'right' }}>
-        <Dropdown
-          key="1"
-          overlay={menu}
-          trigger={['click']}
-          onClick={(e) => e.preventDefault()}>
-          <Button type="link" style={{ fontSize: '14px' }}>
-            {user.name || 'Minha Conta'} <DownOutlined />
-          </Button>
-        </Dropdown>
+        {
+          showSettings && (
+            <Dropdown
+              key="1"
+              overlay={menu}
+              trigger={['click']}
+              onClick={(e) => e.preventDefault()}>
+              <Button type="link" style={{ fontSize: '14px' }}>
+                {user.name || 'Minha Conta'} <DownOutlined />
+              </Button>
+            </Dropdown>
+          )
+        }
       </Col>
     </Row>
   )

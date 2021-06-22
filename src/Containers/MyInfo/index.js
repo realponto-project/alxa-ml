@@ -7,7 +7,8 @@ import {
   Input,
   Form,
   DatePicker,
-  Button
+  Button,
+  Upload
 } from 'antd'
 import {
   always,
@@ -22,10 +23,21 @@ import {
 } from 'ramda'
 import moment from 'moment'
 import mask, { myInfoMask } from '../../utils/Masks'
+import { UploadOutlined } from '@ant-design/icons'
+
+import styles from './style.module.css'
 
 const { Title, Text } = Typography
 
-const MyInfo = ({ loading, user, updateMyInfo }) => {
+const MyInfo = ({
+  company,
+  loading,
+  user,
+  updateMyInfo,
+  handleUpload,
+  handleRemoveLogo,
+  handleChangeUpload
+}) => {
   const [form] = Form.useForm()
 
   const buildIntialValues = applySpec({
@@ -57,6 +69,62 @@ const MyInfo = ({ loading, user, updateMyInfo }) => {
 
   return (
     <Row gutter={[8, 16]}>
+      <Col span={24}>
+        <Card bordered={false}>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Title level={5}>Informações da empresa</Title>
+            </Col>
+            <Col span={8}>
+              <Text strong>Nome</Text>
+              <p>{company?.name}</p>
+            </Col>
+            <Col span={8}>
+              <Text strong>Apelido</Text>
+              <p>{company?.nickName}</p>
+            </Col>
+            <Col span={8}>
+              <Text strong>Documento</Text>
+              <p>{company?.document}</p>
+            </Col>
+
+            <Col span={8}>
+              <Row>
+                <Col span={24}>
+                  <Text strong>Logo</Text>
+                </Col>
+                <Col span={24}>
+                  <Upload
+                    name="file"
+                    listType="picture"
+                    accept="image/jpg, image/jpeg, image/png"
+                    headers={{
+                      Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }}
+                    onChange={handleChangeUpload}
+                    fileList={company.logo ? [company.logo] : []}
+                    action={handleUpload}
+                    onRemove={handleRemoveLogo}>
+                    {!company.logo && (
+                      <Card className={styles.cardUploadLogoChildren}>
+                        <Button type="link" icon={<UploadOutlined />}>
+                          Adicionar
+                        </Button>
+                      </Card>
+                    )}
+                  </Upload>
+                </Col>
+              </Row>
+            </Col>
+
+            <Col span={8}>
+              <Text strong>Site</Text>
+              <p>{company?.siteUrl}</p>
+            </Col>
+          </Row>
+        </Card>
+      </Col>
+
       <Col span={24}>
         <Card bordered={false}>
           <Row gutter={[16, 16]}>
@@ -95,7 +163,7 @@ const MyInfo = ({ loading, user, updateMyInfo }) => {
                   rules={[
                     { required: true, message: 'Este campo é obrigatório!' }
                   ]}>
-                  <Input maxLength={11} />
+                  <Input maxLength={11} placeholder="Insira a sua identidade" />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -105,7 +173,11 @@ const MyInfo = ({ loading, user, updateMyInfo }) => {
                   rules={[
                     { required: true, message: 'Este campo é obrigatório!' }
                   ]}>
-                  <Input addonBefore="+55 " maxLength={17} />
+                  <Input
+                    addonBefore="+55 "
+                    maxLength={17}
+                    placeholder="Insira seu telefone"
+                  />
                 </Form.Item>
               </Col>
               <Col span={8}>
@@ -118,7 +190,7 @@ const MyInfo = ({ loading, user, updateMyInfo }) => {
                   <DatePicker
                     format="DD/MM/YYYY"
                     style={{ width: '100%' }}
-                    placeholder="Data de Nascimento"
+                    placeholder="Data de nascimento"
                   />
                 </Form.Item>
               </Col>

@@ -20,10 +20,25 @@ const updateProduct = async (values) => {
   return await axiosIntance.put(`/products/${values.id}`, values)
 }
 
+const getTransactionsToChart = async (id) => {
+  return await axiosIntance.get(`/products-transactions/${id}`)
+}
+
+const removeImage = async (productImageId) => {
+  return await axiosIntance.delete(`/remove-image/${productImageId}`)
+}
+
+const getAllImagesByProductId = async (productId) => {
+  return await axiosIntance.get(`/fetch-images/${productId}`)
+}
+
 export {
   createProduct,
   getAll,
   getProductByBarCode,
   getProductById,
-  updateProduct
+  updateProduct,
+  getTransactionsToChart,
+  removeImage,
+  getAllImagesByProductId
 }

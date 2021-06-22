@@ -10,3 +10,7 @@ export const getCompanyById = async (companyId) => {
 export const createCompany = async (values) => {
   return await axios.post(baseUrl, values)
 }
+
+export const companyRemoveLogo = async () => {
+  return await axiosIntance.delete('/companies/remove-logo')
+}

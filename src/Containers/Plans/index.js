@@ -22,7 +22,8 @@ import {
   Modal,
   Input,
   Form,
-  Button
+  Button,
+  Select
 } from 'antd'
 import { connect } from 'react-redux'
 import { CheckOutlined } from '@ant-design/icons'
@@ -35,8 +36,8 @@ import Logo from './alxa.svg'
 import Visa from './visa.svg'
 import MasterCard from './mastercard.svg'
 
-const { Title } = Typography
-const { Paragraph } = Typography
+const { Title, Paragraph } = Typography
+const { Option } = Select
 
 const buildPlan = applySpec({
   activated: pathOr('', ['activated']),
@@ -56,22 +57,23 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
   const [planId, setPlanId] = useState('')
   const [plans, setPlans] = useState([])
   const [form] = Form.useForm()
+  const [installment, setInstallment] = useState(1)
 
   const selectPlan = (id) => {
     setPlanId(id)
   }
 
-  useEffect(() => {
-    const getAllPlans = () => {
-      getAll({ activated: true, description: 'Anual' }).then(({ data: { source } }) => {
-        const sourceFormated = map(buildPlan, source)
-        setPlans(sourceFormated)
-        setPlanId(
-          prop('key', find(propEq('description', 'Anual'), sourceFormated))
-        )
-      })
-    }
+  const getAllPlans = () => {
+    getAll({ activated: true, description: 'Anual' }).then(({ data: { source } }) => {
+      const sourceFormated = map(buildPlan, source)
+      setPlans(sourceFormated)
+      setPlanId(
+        prop('key', find(propEq('quantityProduct', 300), sourceFormated))
+      )
+    })
+  }
 
+  useEffect(() => {
     getAllPlans()
   }, [])
 
@@ -108,11 +110,16 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
     card_holder_name: [new Array(45).fill('#').join(''), /([^a-zA-Z|\s])/g],
     card_number: ['#### #### #### ####', /\D/g, /(\s{0,3})$/g],
     card_expiration_date: ['##/##', /\D/g, /(\/)$/g],
-    card_cvv: ['###', /\D/g]
+    card_cvv: ['###', /\D/g],
+    installment: ['#', /\D/g]
   }
 
   const maskTest = (e) => (key) => {
     return { [key]: mask(e[key], patterns[key]) }
+  }
+
+  const installments = (value) => {
+    setInstallment(value)
   }
 
   const addSubscription = async (values) => {
@@ -129,9 +136,11 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
         cardHash,
         activated: true,
         amount: Number(amount) * 100,
-        paymentMethod: 'credit_card'
+        paymentMethod: 'credit_card',
+        installments: installment
       })
       setSubscription(data)
+      setInstallment(1)
       return response
     } catch (error) {
       console.error(error)
@@ -210,7 +219,7 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
             </Paragraph>
 
             <Paragraph className={styles.fontWeightBold}>
-              Assine o plano anual e ganhe + 1 mês totalmente GRÁTIS!
+              Assine um plano e ganhe + 1 mês totalmente GRÁTIS!
             </Paragraph>
           </Col>
           <Col span={12}>
@@ -221,7 +230,7 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
             <Paragraph className={styles.textMostPopular}>
               Mais popular
             </Paragraph>
-            <Row justify="center">
+            <Row justify="space-between">
               {plans.map(
                 ({
                   key,
@@ -229,9 +238,9 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
                   amount,
                   month,
                   quantityProduct,
-                  text
+                  text,
                 }) => (
-                  <Col span={8} key={key}>
+                  <Col span={12} key={key}>
                     <div
                       className={styles.cardPlans}
                       onClick={() => selectPlan(key)}
@@ -303,7 +312,7 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
                   </label>
                 }
                 name="card_holder_name">
-                <Input />
+                <Input placeholder="Insira o nome do titular"/>
               </Form.Item>
 
               <Form.Item
@@ -319,11 +328,11 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
                   </label>
                 }
                 name="card_number">
-                <Input />
+                <Input placeholder="Insira o número do cartão"/>
               </Form.Item>
               <Row style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Form.Item
-                  style={{ width: '50%' }}
+                  style={{ width: '33%' }}
                   label={
                     <label
                       style={{
@@ -336,11 +345,11 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
                     </label>
                   }
                   name="card_expiration_date">
-                  <Input />
+                  <Input placeholder="Insira a data"/>
                 </Form.Item>
 
                 <Form.Item
-                  style={{ width: '45%' }}
+                  style={{ width: '33%' }}
                   label={
                     <label
                       style={{
@@ -353,7 +362,29 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
                     </label>
                   }
                   name="card_cvv">
-                  <Input />
+                  <Input placeholder="Insira o código"/>
+                </Form.Item>
+
+                <Form.Item
+                  style={{ width: '33%' }}
+                  label={
+                    <label
+                      style={{
+                        color: '#333',
+                        fontWeight: 'bold',
+                        fontSize: '11px',
+                        margin: '0 0 0 0'
+                      }}>
+                      Parcelas
+                    </label>
+                  }
+                  name="installment"
+                  >
+                  <Select onChange={installments} defaultValue={installment}>
+                    <Option value={1}>1</Option>
+                    <Option value={2}>2</Option>
+                    <Option value={3}>3</Option>
+                  </Select>
                 </Form.Item>
               </Row>
 
@@ -367,6 +398,10 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
                 <Col span={12}>
                   <Paragraph className={styles.textSignature}>
                     Valor total
+                  </Paragraph>
+
+                  <Paragraph className={styles.textSignature}>
+                    Parcelas
                   </Paragraph>
 
                   <Paragraph className={styles.textSignature}>
@@ -384,6 +419,10 @@ const Plan = ({ isVisible, handleCancel, setSubscription }) => {
                 <Col span={12} style={{ textAlign: 'right' }}>
                   <Paragraph className={styles.textSignature}>
                     <strong>R$ {amount}</strong>
+                  </Paragraph>
+
+                  <Paragraph className={styles.textSignature}>
+                    <strong>{installment} x</strong>
                   </Paragraph>
 
                   <Paragraph className={styles.textSignature}>

@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import ManagerContainer from '../../Containers/MyTeam/Manager'
-import { createUser, getAll, updateUser } from '../../Services/User'
+import {
+  createUser,
+  getAll,
+  updateUser,
+  sendInviteMember
+} from '../../Services/User'
 import { connect } from 'react-redux'
 import { compose, isEmpty } from 'ramda'
 
@@ -38,7 +43,7 @@ const Manager = ({ myTeamSearch, setMyTeamSearch, cleanMyTeamSearch }) => {
     }
   }
 
-  const onChangeTable = ({current}) => {
+  const onChangeTable = ({ current }) => {
     setPage(current)
   }
 
@@ -46,17 +51,15 @@ const Manager = ({ myTeamSearch, setMyTeamSearch, cleanMyTeamSearch }) => {
     setLoading(true)
     try {
       const {
-        data: { source,total }
+        data: { source, total }
       } = await getAll(buildMyTeamSearch(myTeamSearch))
       setUsers(source)
       setTotal(total)
-    }catch (error) {
+    } catch (error) {
       console.log(error)
     }
     setLoading(false)
   }
-
-
   const handleSubmit = async (values) => {
     try {
       await createUser(values)
@@ -91,15 +94,25 @@ const Manager = ({ myTeamSearch, setMyTeamSearch, cleanMyTeamSearch }) => {
   }
 
   const handleGetUsersByFilters = () => {
-    if(page !== 1){
+    if (page !== 1) {
       setPage(1)
     } else {
-    getAllUsers()
+      getAllUsers()
+    }
+  }
+
+  const handleClickMail = async (userId) => {
+    try {
+      await sendInviteMember(userId)
+      getAllUsers()
+    } catch (err) {
+      console.error(err)
     }
   }
 
   return (
     <ManagerContainer
+      handleClickMail={handleClickMail}
       users={users}
       handleSubmit={handleSubmit}
       handleSubmitUpdate={handleSubmitUpdate}
@@ -128,4 +141,3 @@ const mapDispatchToProps = (dispatch) => ({
 const enhanced = compose(connect(mapStateToProps, mapDispatchToProps))
 
 export default enhanced(Manager)
-

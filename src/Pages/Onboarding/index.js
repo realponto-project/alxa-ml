@@ -1,46 +1,86 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { withRouter } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { compose } from 'ramda'
+import { compose, isEmpty, pathOr } from 'ramda'
+import { verify } from 'jsonwebtoken'
+
 import OnboardingContainer from '../../Containers/Onboarding'
 import {
-  updateUserPassword as updateUserPasswordService,
-  updateMyInfo as updateMyInfoService
+  updateMyInfo as updateMyInfoService,
+  resetPassword,
+  getUserById
 } from '../../Services/User'
 
-const Onboarding = ({ user, loggedUser, history }) => {
+const Onboarding = ({ history, match }) => {
   const [errorMessage, setErrorMessage] = useState(false)
+  const [userId, setUserId] = useState('')
+  const [user, setUser] = useState({})
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (values) => {
     try {
-      await updateUserPasswordService(values)
+      await resetPassword(match.params.token, values)
       setLoading(false)
-      history.push('/logged/dashboard')
+      history.push('/login')
     } catch (error) {
-      updateMyInfoService(user.id, { firstAccess: true }).then(() =>
-        history.push('/logged/dashboard')
-      )
+      updateMyInfoService(
+        user.id,
+        {
+          firstAccess: true,
+          lastTokenDate: null,
+          countTokenSended: 0
+        },
+        { headers: match.params.token }
+      ).then(() => history.push('/login'))
       console.log(error)
     }
   }
 
   const updateMyInfo = async (userId, values) => {
     try {
-      const { data } = await updateMyInfoService((userId = user.id), {
-        ...values,
-        document: values.document.replace(/\D/g, '')
-      })
-      loggedUser({
-        ...user,
-        ...data
-      })
+      await updateMyInfoService(
+        (userId = user.id),
+        {
+          ...values,
+          document: values.document.replace(/\D/g, '')
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${match.params.token}`
+          }
+        }
+      )
       setLoading(false)
     } catch (error) {
+      setLoading(false)
       setErrorMessage(error.response.data.error)
       throw error
     }
   }
+
+  useEffect(() => {
+    verify(
+      match.params.token,
+      process.env.REACT_APP_SECRET_KEY_JWT,
+      (error, decoded) => {
+        const userId = pathOr(false, ['user', 'id'], decoded)
+        if (!error && userId) {
+          setUserId(userId)
+        } else {
+          throw new Error('Invalid token')
+        }
+      }
+    )
+  }, [])
+
+  useEffect(() => {
+    if (!isEmpty(userId)) {
+      getUserById(userId, {
+        headers: {
+          Authorization: `Bearer ${match.params.token}`
+        }
+      }).then(({ data }) => setUser(data))
+    }
+  }, [userId])
 
   return (
     <OnboardingContainer
@@ -54,17 +94,6 @@ const Onboarding = ({ user, loggedUser, history }) => {
   )
 }
 
-const mapStateToProps = ({ user }) => ({
-  user
-})
-
-const mapDispatchToProps = (dispatch) => ({
-  loggedUser: (payload) => dispatch({ type: 'USER_LOGGED', payload })
-})
-
-const enhanced = compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  withRouter
-)
+const enhanced = compose(withRouter)
 
 export default enhanced(Onboarding)

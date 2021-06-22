@@ -15,18 +15,22 @@ import { CheckOutlined } from '@ant-design/icons'
 import logo from '../../../Assets/logo.svg'
 import allTheData from '../../../Assets/allTheData.svg'
 import styles from './style.module.css'
-import { validateCNPJ, validateEmail } from '../../../utils/validators'
+import {
+  validateCNPJ,
+  validateEmail,
+  validateNickName
+} from '../../../utils/validators'
 
 const { Title, Text, Paragraph } = Typography
 const rules = [{ required: true, message: 'Este campo é obrigatório!' }]
 
 const Register = ({ handleClickContinue, loading }) => (
   <Row>
-    <Col span={12}>
+    <Col span={16}>
       <div className={styles.contentPublicity}>
         <Image width={160} src={logo} preview={false} />
         <h1>Tenha mais controle na sua empresa com o alxa!</h1>
-        <h4>Aproveite todas as nossa funcionalidades</h4>
+        <h4>Aproveite todas as nossa funcionalidades:</h4>
         <Space direction="vertical" style={{ margin: '0 0 170px 10px' }}>
           <Text>
             <CheckOutlined /> Gestão de estoque
@@ -49,12 +53,12 @@ const Register = ({ handleClickContinue, loading }) => (
           poucos minutos.
         </Paragraph>
         <div className={styles.wrapperAllTheData}>
-          <Image src={allTheData} preview={false} width={400} />
+          <Image src={allTheData} preview={false} width={'100%'} />
         </div>
       </div>
     </Col>
 
-    <Col span={12}>
+    <Col span={8}>
       <div className={styles.contentForm}>
         <Row
           style={{
@@ -62,20 +66,17 @@ const Register = ({ handleClickContinue, loading }) => (
           }}
           align="middle">
           <Col span={24}>
-            <Row justify="center">
-              <Title level={2}>Dados da Empresa</Title>
-            </Row>
             <Form
               validateTrigger="onBlur"
               layout="vertical"
               onFinish={(formData) => handleClickContinue(formData)}>
-              <Card>
-                <Title level={5}>Dados da Empresa</Title>
+              <Card bordered={false}>
+                <Title level={4}>Dados da Empresa</Title>
                 <Form.Item
                   rules={rules}
                   name="razaoSocial"
                   label="Nome da empresa">
-                  <Input />
+                  <Input placeholder="Insira o nome da empresa" />
                 </Form.Item>
                 <Form.Item
                   rules={[
@@ -84,12 +85,22 @@ const Register = ({ handleClickContinue, loading }) => (
                   ]}
                   name="cnpj"
                   label="CPNJ">
-                  <Input />
+                  <Input placeholder="Insira o cnpj" />
                 </Form.Item>
-                <br />
+
+                <Form.Item
+                  rules={[
+                    ...rules,
+                    { validator: (_, value) => validateNickName(value) }
+                  ]}
+                  name="nickName"
+                  label="apelido">
+                  <Input placeholder="Insira o nome fantasia" />
+                </Form.Item>
+
                 <Title level={5}>Dados de acesso</Title>
                 <Form.Item rules={rules} name="responsible" label="Responsável">
-                  <Input />
+                  <Input placeholder="Insira o nome do responsável" />
                 </Form.Item>
                 <Form.Item
                   rules={[
@@ -98,26 +109,26 @@ const Register = ({ handleClickContinue, loading }) => (
                   ]}
                   name="email"
                   label="E-mail">
-                  <Input />
+                  <Input placeholder="Insira o email" />
                 </Form.Item>
                 <Form.Item rules={rules} name="password" label="Senha">
-                  <Input.Password />
+                  <Input.Password placeholder="Insira a senha" />
                 </Form.Item>
               </Card>
 
-              <br />
-
               <Row justify="center">
-                <Form.Item style={{ width: '100%' }}>
-                  <Button
-                    size="large"
-                    htmlType="submit"
-                    loading={loading}
-                    type="primary"
-                    style={{ width: '100%' }}>
-                    Continuar
-                  </Button>
-                </Form.Item>
+                <Col span={22}>
+                  <Form.Item>
+                    <Button
+                      size="large"
+                      htmlType="submit"
+                      loading={loading}
+                      type="primary"
+                      style={{ width: '100%' }}>
+                      Continuar
+                    </Button>
+                  </Form.Item>
+                </Col>
               </Row>
             </Form>
           </Col>

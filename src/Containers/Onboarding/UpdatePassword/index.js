@@ -9,32 +9,10 @@ const { Paragraph } = Typography
 const UpdatePass = ({ onEdit, loading, setLoading }) => {
   const [form] = Form.useForm()
 
-  const validatorPassword = (passwordPropName, shouldBeEqual = false) => ({
-    getFieldValue
-  }) => {
-    const validator = (rule, value) => {
-      if (shouldBeEqual) {
-        if (!value || getFieldValue(passwordPropName) === value) {
-          return Promise.resolve()
-        }
-        return Promise.reject('Senhas não coincidem!')
-      }
-
-      if (value && getFieldValue(passwordPropName) === value) {
-        return Promise.reject(
-          'A sua nova senha deve ser diferente da sua senha antiga!'
-        )
-      }
-      return Promise.resolve()
-    }
-
-    return { validator }
-  }
-
   return (
     <>
       <Title level={1} className={styles.textTitleForm}>
-        Atualize sua senha
+        Crie sua senha
       </Title>
       <Card
         style={{
@@ -65,30 +43,10 @@ const UpdatePass = ({ onEdit, loading, setLoading }) => {
               })
           }}>
           <Form.Item
-            label="Senha atual"
-            name="password"
+            label="Senha"
+            name="newPassword"
             rules={[{ required: true, message: 'Campo obrigatório' }]}>
             <Input.Password placeholder="Insira sua senha atual" />
-          </Form.Item>
-
-          <Form.Item
-            label="Nova senha"
-            name="newPassword"
-            rules={[
-              validatorPassword('password', false),
-              { required: true, message: 'Campo obrigatório!' }
-            ]}>
-            <Input.Password placeholder="Insira sua nova senha" />
-          </Form.Item>
-
-          <Form.Item
-            label="Confirmar senha"
-            name="confirmPassword"
-            rules={[
-              validatorPassword('newPassword', true),
-              { required: true, message: 'Campo obrigatório!' }
-            ]}>
-            <Input.Password placeholder="Confirme sua senha" />
           </Form.Item>
         </Form>
       </Card>

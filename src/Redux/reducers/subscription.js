@@ -3,6 +3,7 @@ import { SET_SUBSCRIPTION, UNSET_SUBSCRIPTION } from '../actions/subscription'
 const initialState = {
   activated: true,
   amount: 0,
+  installment: 1,
   authorization_code: null,
   autoRenew: false,
   companyId: null,

@@ -16,9 +16,20 @@ const getSerialOrderOutputs = async (params = {}) => {
   return await axiosIntance.get('/serials', { params })
 }
 
+const getAll = async (params = {}) => {
+  return await axiosIntance.get('/serials', { params })
+}
+
+
+const updateSerial = async (id, values = {}) => {
+  return await axiosIntance.put(`/serials/${id}`, values)
+}
+
 export {
+  getAll,
   getBySerialNumber,
   createSerialNumbers,
   associateSerialNumber,
-  getSerialOrderOutputs
+  getSerialOrderOutputs,
+  updateSerial
 }

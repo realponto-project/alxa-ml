@@ -18,3 +18,11 @@ export const validateEmail = (value) => {
     return Promise.resolve()
   }
 }
+
+export const validateNickName = (value) => {
+  if (/\s/g.test(value)) {
+    return Promise.reject(new Error('Não deve possuir espaços em branco'))
+  } else {
+    return Promise.resolve()
+  }
+}

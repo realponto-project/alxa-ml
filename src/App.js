@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -9,11 +9,13 @@ import storage from 'redux-persist/lib/storage'
 
 import Login from './Pages/Login'
 import Register from './Pages/Accreditation/Register'
+import ForgotPass from './Pages/Accreditation/Register/ForgotPass'
+import ResetPass from './Pages/Accreditation/Register/ResetPass'
 import Success from './Pages/Accreditation/Register/Success'
 import Logged from './Pages/Logged'
 import reducers from './Redux/reducers'
 import Onboarding from './Pages/Onboarding'
-import PDV  from './Pages/PDV'
+import { startsWith } from 'ramda'
 
 const persistConfig = {
   key: 'root',
@@ -28,16 +30,24 @@ const store = createStore(
 )
 
 const App = () => {
+  useEffect(() => {
+    const { search, origin } = window.location
+    if (startsWith('?code=', search)) {
+      window.location.replace(`${origin}/#/logged/account/manager${search}`)
+    }
+  })
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>
         <Switch>
+          <Route exact path="/welcome-member/:token" component={Onboarding} />
           <Route path="/login" component={Login} />
           <Route exact path="/register/sucess" component={Success} />
           <Route path="/register" component={Register} />
+          <Route path="/forgotPass" component={ForgotPass} />
+          <Route path="/reset-password/:token" component={ResetPass} />
           <Route path="/logged" component={Logged} />
-          <Route path="/pdv" component={PDV} />
-          <Route exact path="/user/onboarding" component={Onboarding} />
           <Redirect from="*" to="/login" />
         </Switch>
       </PersistGate>
