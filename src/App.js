@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -15,6 +15,7 @@ import Success from './Pages/Accreditation/Register/Success'
 import Logged from './Pages/Logged'
 import reducers from './Redux/reducers'
 import Onboarding from './Pages/Onboarding'
+import { startsWith } from 'ramda'
 
 const persistConfig = {
   key: 'root',
@@ -29,6 +30,13 @@ const store = createStore(
 )
 
 const App = () => {
+  useEffect(() => {
+    const { search, origin } = window.location
+    if (startsWith('?code=', search)) {
+      window.location.replace(`${origin}/#/logged/account/manager${search}`)
+    }
+  })
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistStore(store)}>

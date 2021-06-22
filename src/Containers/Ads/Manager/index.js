@@ -1,20 +1,10 @@
 import React from 'react'
-import {
-  Button,
-  Card,
-  Col,
-  Input,
-  Row,
-  Typography,
-  Select,
-  Form,
-  Checkbox
-} from 'antd'
+import { Button, Card, Col, Input, Row, Typography, Select, Form } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { keys, map } from 'ramda'
 
 import AdList from './AdList'
-import { mlStatus } from '../../../utils/orderStatus'
+import { mlStatus, updateStatus } from '../../../utils/orderStatus'
 import ModalLoadAds from './ModalLoadAds'
 import ModaaUpdatePrices from './ModalUpdatePrice'
 
@@ -26,8 +16,6 @@ const Manager = ({
   loading,
   source,
   onChangeTable,
-  total,
-  page,
   accounts,
   formLoadAd,
   handleSubmitSync,
@@ -37,6 +25,7 @@ const Manager = ({
   modalSyncIsVisible,
   opneModalSync,
   calcs,
+  pagination,
   closeModalSync,
   modalUpdatePriceIsVisible,
   closeModalUpdatePrice,
@@ -77,12 +66,16 @@ const Manager = ({
       <Col span={24}>
         <Card bordered={false}>
           <Form
+            layout="vertical"
             form={formSearch}
-            initialValues={{ status: '', type_sync: [false, true] }}
+            initialValues={{
+              status: '',
+              update_status: ''
+            }}
             onFinish={handleSubmitForm}>
             <Row gutter={[8, 8]}>
               <Col span={8}>
-                <Form.Item name="account">
+                <Form.Item name="account" label="Conta">
                   <Select style={{ width: '100%' }}>
                     {map(
                       ({ fullname, id }) => (
@@ -95,8 +88,23 @@ const Manager = ({
                   </Select>
                 </Form.Item>
               </Col>
+              <Col span={8}>
+                <Form.Item name="update_status" label="Status de atualização">
+                  <Select style={{ width: '100%' }}>
+                    <Option value="">Todos</Option>
+                    {map(
+                      (key) => (
+                        <Option key={key} value={key}>
+                          {updateStatus[key]}
+                        </Option>
+                      ),
+                      keys(updateStatus)
+                    )}
+                  </Select>
+                </Form.Item>
+              </Col>
               <Col span={8} style={{ paddingTop: '5px' }}>
-                <Form.Item name="status">
+                <Form.Item name="status" label="Status">
                   <Select style={{ width: '100%' }}>
                     <Option value="">Todos</Option>
                     {map(
@@ -108,18 +116,6 @@ const Manager = ({
                       keys(mlStatus)
                     )}
                   </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item name="type_sync">
-                  <Checkbox.Group>
-                    <Checkbox value={true} style={{ lineHeight: '32px' }}>
-                      Preço atualizado
-                    </Checkbox>
-                    <Checkbox value={false} style={{ lineHeight: '32px' }}>
-                      Preço desatualizado
-                    </Checkbox>
-                  </Checkbox.Group>
                 </Form.Item>
               </Col>
 
@@ -159,10 +155,9 @@ const Manager = ({
           <AdList
             onChangeTable={onChangeTable}
             datasource={source}
-            total={total}
             handleClickEdit={handleClickEdit}
             loading={loading}
-            page={page}
+            pagination={pagination}
           />
         </Card>
       </Col>
@@ -172,6 +167,7 @@ const Manager = ({
         close={closeModalSync}
         form={formLoadAd}
         onSubmit={handleSubmitSync}
+        loading={loading}
         accounts={accounts}
       />
       <ModaaUpdatePrices
