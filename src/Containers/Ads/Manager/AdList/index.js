@@ -20,6 +20,19 @@ const TagUpdateStatus = ({ status }) => {
   return <Tag color={color}>{value}</Tag>
 }
 
+const TagStatus = ({ status }) => {
+  const color = {
+    active: 'lime',
+    payment_required: 'red',
+    under_review: 'orange',
+    paused: 'blue',
+    closed: 'red'
+  }[status]
+
+  const value = mlStatus[status]
+
+  return <Tag color={color}>{value}</Tag>
+}
 const columns = ({ handleClickEdit }) => [
   {
     title: 'SKU',
@@ -47,6 +60,7 @@ const columns = ({ handleClickEdit }) => [
   {
     title: 'Status de atualização',
     dataIndex: 'update_status',
+    align: 'center',
     fixed: 'left',
     render: (update_status) => {
       return <TagUpdateStatus status={update_status} />
@@ -57,7 +71,8 @@ const columns = ({ handleClickEdit }) => [
     dataIndex: 'status',
     key: 'status',
     fixed: 'left',
-    render: (status) => mlStatus[status]
+    align: 'center',
+    render: (status) => <TagStatus status={status} />
   }
 ]
 

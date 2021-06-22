@@ -46,15 +46,15 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
   const handleChangeUpload = () => {
     setLoading(true)
     setFilename('')
-    readXlsxFile(inputEl.current.files[0], { schema }).then(function ({
-      rows
-    }) {
-      const name = pathOr('', ['current', 'files', '0', 'name'], inputEl)
+    readXlsxFile(inputEl.current.files[0], { schema })
+      .then(function ({ rows }) {
+        const name = pathOr('', ['current', 'files', '0', 'name'], inputEl)
 
-      setLoading(false)
-      setRows(rows)
-      setFilename(name)
-    })
+        setLoading(false)
+        setRows(rows)
+        setFilename(name)
+      })
+      .catch((err) => console.error('err', err))
   }
 
   const handelOk = () => {

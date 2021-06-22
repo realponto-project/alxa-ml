@@ -52,12 +52,12 @@ const Manager = ({ tokenFcm }) => {
       ascend: 'ASC'
     }
 
-    if(limit !== pageSize){
+    if (limit !== pageSize) {
       setLimit(pageSize)
       setPage(1)
     }
 
-    if( action === 'sort'){
+    if (action === 'sort') {
       setOrder(
         sorter.order ? [[sorter.columnKey, formatOrder[sorter.order]]] : []
       )
@@ -65,7 +65,6 @@ const Manager = ({ tokenFcm }) => {
     } else {
       setPage(current)
     }
-
   }
 
   const closeModalAdd = () => {
