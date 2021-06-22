@@ -191,10 +191,18 @@ const mlStatus = {
   closed: 'Fechado'
 }
 
+const updateStatus = {
+  updated: 'Atualizado',
+  unupdated: 'Desatualizado',
+  waiting_update: 'Aguardoando atualização',
+  error: 'Erro ao atualizar'
+}
+
 export {
   translateStatus,
   statusColors,
   orderStatus,
   parseStatusToType,
-  mlStatus
+  mlStatus,
+  updateStatus
 }

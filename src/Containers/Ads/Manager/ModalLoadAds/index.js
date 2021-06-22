@@ -5,7 +5,7 @@ import { map } from 'ramda'
 
 const { Option } = Select
 
-const ModalLoadAds = ({ visible, close, form, onSubmit, accounts }) => {
+const ModalLoadAds = ({ visible, close, form, onSubmit, accounts, loading }) => {
   return (
     <Modal
       visible={visible}
@@ -15,7 +15,7 @@ const ModalLoadAds = ({ visible, close, form, onSubmit, accounts }) => {
         <Button key="cancel" onClick={close}>
           Cancelar
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.submit()}>
+        <Button key="submit" loading={loading} type="primary" onClick={() => form.submit()}>
           Submit
         </Button>
       ]}>

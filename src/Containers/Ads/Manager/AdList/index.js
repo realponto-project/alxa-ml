@@ -1,7 +1,6 @@
 import React from 'react'
-import { Table, Progress, Tag } from 'antd'
+import { Table, Tag } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
-import { gte } from 'ramda'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -17,10 +16,23 @@ const TagUpdateStatus = ({ status }) => {
     waiting_update: 'Aguardoando atualização',
     error: 'Erro ao atualizar'
   }[status]
-  
-  return <Tag color={color} >{value}</Tag>
+
+  return <Tag color={color}>{value}</Tag>
 }
 
+const TagStatus = ({ status }) => {
+  const color = {
+    active: 'lime',
+    payment_required: 'red',
+    under_review: 'orange',
+    paused: 'blue',
+    closed: 'red'
+  }[status]
+
+  const value = mlStatus[status]
+
+  return <Tag color={color}>{value}</Tag>
+}
 const columns = ({ handleClickEdit }) => [
   {
     title: 'SKU',
@@ -47,40 +59,20 @@ const columns = ({ handleClickEdit }) => [
   },
   {
     title: 'Status de atualização',
-    dataIndex: 'mercado_libre_account_ads.update_status',
+    dataIndex: 'update_status',
+    align: 'center',
     fixed: 'left',
-    render: (
-      update_status,
-    ) => {
-      return (
-        <TagUpdateStatus status={update_status} />
-      )
-    }
-  },
-  {
-    title: 'Progresso',
-    dataIndex: 'mercado_libre_account_ads.id',
-    fixed: 'left',
-    render: (
-      _,
-      { totalAccountAd, typeSyncTrue, mercado_libre_account_ads }
-    ) => {
-      return (
-        <Progress
-          percent={(typeSyncTrue / totalAccountAd) * 100}
-          steps={totalAccountAd}
-          strokeColor="#52c41a"
-          format={() => `${typeSyncTrue}/${totalAccountAd}`}
-        />
-      )
+    render: (update_status) => {
+      return <TagUpdateStatus status={update_status} />
     }
   },
   {
     title: 'Status',
-    dataIndex: 'mercado_libre_account_ads.status',
+    dataIndex: 'status',
     key: 'status',
     fixed: 'left',
-    render: (status) => mlStatus[status]
+    align: 'center',
+    render: (status) => <TagStatus status={status} />
   }
 ]
 
@@ -89,12 +81,11 @@ const AdList = ({
   handleClickEdit,
   loading,
   onChangeTable,
-  total,
-  page
+  pagination
 }) => {
   return (
     <Table
-      pagination={{ total, current: page }}
+      pagination={pagination}
       onChange={onChangeTable}
       columns={columns({ handleClickEdit })}
       loading={loading}
