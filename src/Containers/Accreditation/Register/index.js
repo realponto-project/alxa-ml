@@ -94,7 +94,7 @@ const Register = ({ handleClickContinue, loading }) => (
                     { validator: (_, value) => validateNickName(value) }
                   ]}
                   name="nickName"
-                  label="apelido">
+                  label="Apelido">
                   <Input placeholder="Insira o nome fantasia" />
                 </Form.Item>
 

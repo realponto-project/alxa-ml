@@ -11,7 +11,15 @@ const schema = {
     prop: 'sku',
     type: String
   },
+  sku: {
+    prop: 'sku',
+    type: String
+  },
   PRICE: {
+    prop: 'price',
+    type: Number
+  },
+  preço: {
     prop: 'price',
     type: Number
   }
@@ -22,7 +30,7 @@ const MyUploadXlsx = ({ reference, handleChange, filename, loading }) => (
     <label
       htmlFor="upload-xlsx"
       className={`ant-btn ${loading && 'ant-btn-loading'}`}>
-      <UploadOutlined /> importar planilha para atualizar preços
+      <UploadOutlined /> Importar planilha para atualizar preços
       {loading && <LoadingOutlined />}
     </label>
     <input
@@ -49,6 +57,7 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
     readXlsxFile(inputEl.current.files[0], { schema })
       .then(function ({ rows }) {
         const name = pathOr('', ['current', 'files', '0', 'name'], inputEl)
+        console.log(rows)
 
         setLoading(false)
         setRows(rows)
@@ -68,19 +77,23 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
     setCalcPriceId()
     setFilename('')
     setLoading(false)
+
+    if (inputEl.current) {
+      inputEl.current.value = ''
+    }
   }, [visible])
 
   return (
     <Modal
       visible={visible}
       onCancel={close}
-      title={'Caregar anúncios'}
+      title={'Carregar anúncios'}
       footer={[
         <Button key="cancel" onClick={close}>
           Cancelar
         </Button>,
         <Button key="submit" type="primary" onClick={handelOk}>
-          Submit
+          Atualizar
         </Button>
       ]}>
       <MyUploadXlsx
@@ -90,7 +103,7 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
         loading={loading}
       />
       <Select
-        placeholder="Selecione uma fórmula"
+        placeholder="Selecione uma fórmula:"
         allowClear
         rules={[{ required: true }]}
         onChange={setCalcPriceId}

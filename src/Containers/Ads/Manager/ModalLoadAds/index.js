@@ -10,19 +10,19 @@ const ModalLoadAds = ({ visible, close, form, onSubmit, accounts, loading }) => 
     <Modal
       visible={visible}
       onCancel={close}
-      title={'Caregar anúncios'}
+      title={'Carregar anúncios'}
       footer={[
         <Button key="cancel" onClick={close}>
           Cancelar
         </Button>,
         <Button key="submit" loading={loading} type="primary" onClick={() => form.submit()}>
-          Submit
+          Buscar
         </Button>
       ]}>
       <Form layout="vertical" form={form} onFinish={onSubmit}>
         <Form.Item
           name="mlAccountId"
-          label="Selecione a conta que os anúncios serão carregados">
+          label="Selecione a conta que os anúncios serão carregados:">
           <Select
             placeholder="Selecione uma conta"
             rules={[{ required: true }]}
@@ -43,7 +43,7 @@ const ModalLoadAds = ({ visible, close, form, onSubmit, accounts, loading }) => 
           </Select>
         </Form.Item>
 
-        <Form.Item name="lastSyncAds" label="Buscar até">
+        <Form.Item name="lastSyncAds" label="Buscar até:">
           <DatePicker allowClear />
         </Form.Item>
       </Form>
