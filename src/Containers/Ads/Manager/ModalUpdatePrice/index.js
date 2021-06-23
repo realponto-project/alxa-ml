@@ -11,7 +11,15 @@ const schema = {
     prop: 'sku',
     type: String
   },
+  sku: {
+    prop: 'sku',
+    type: String
+  },
   PRICE: {
+    prop: 'price',
+    type: Number
+  },
+  preço: {
     prop: 'price',
     type: Number
   }
@@ -49,6 +57,7 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
     readXlsxFile(inputEl.current.files[0], { schema })
       .then(function ({ rows }) {
         const name = pathOr('', ['current', 'files', '0', 'name'], inputEl)
+        console.log(rows)
 
         setLoading(false)
         setRows(rows)
@@ -68,6 +77,10 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
     setCalcPriceId()
     setFilename('')
     setLoading(false)
+
+    if (inputEl.current) {
+      inputEl.current.value = ''
+    }
   }, [visible])
 
   return (
