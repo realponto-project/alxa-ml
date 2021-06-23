@@ -22,7 +22,7 @@ const MyUploadXlsx = ({ reference, handleChange, filename, loading }) => (
     <label
       htmlFor="upload-xlsx"
       className={`ant-btn ${loading && 'ant-btn-loading'}`}>
-      <UploadOutlined /> importar planilha para atualizar preços
+      <UploadOutlined /> Importar planilha para atualizar preços
       {loading && <LoadingOutlined />}
     </label>
     <input
@@ -74,13 +74,13 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
     <Modal
       visible={visible}
       onCancel={close}
-      title={'Caregar anúncios'}
+      title={'Carregar anúncios'}
       footer={[
         <Button key="cancel" onClick={close}>
           Cancelar
         </Button>,
         <Button key="submit" type="primary" onClick={handelOk}>
-          Submit
+          Atualizar
         </Button>
       ]}>
       <MyUploadXlsx
@@ -90,7 +90,7 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
         loading={loading}
       />
       <Select
-        placeholder="Selecione uma fórmula"
+        placeholder="Selecione uma fórmula:"
         allowClear
         rules={[{ required: true }]}
         onChange={setCalcPriceId}
