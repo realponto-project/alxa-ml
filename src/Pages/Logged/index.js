@@ -24,7 +24,6 @@ export const Logged = ({ setReducrTokenFcm, tokenFcm }) => {
   }, [])
 
   messaging.onMessage((payload) => {
-    console.log('payload', payload)
     const {
       notification: { body }
     } = payload
