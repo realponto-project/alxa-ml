@@ -19,11 +19,12 @@ export const Logged = ({ setReducrTokenFcm, tokenFcm }) => {
         .then((token) => {
           setReducrTokenFcm(token)
         })
-        .catch((err) => console.error(err))
+        .catch((err) => console.error('err', err))
     }
   }, [])
 
   messaging.onMessage((payload) => {
+    console.log('payload', payload)
     const {
       notification: { body }
     } = payload
