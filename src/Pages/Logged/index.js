@@ -14,7 +14,8 @@ const renderRoute = (route) => <ProtectedRoute key={route.path} {...route} />
 
 export const Logged = ({ setReducrTokenFcm, tokenFcm }) => {
   useEffect(() => {
-    if (Notification.permission === 'granted' && isEmpty(tokenFcm)) {
+    if (isEmpty(tokenFcm)) {
+      // if (Notification.permission === 'granted' && isEmpty(tokenFcm)) {
       getToken()
         .then((token) => {
           setReducrTokenFcm(token)
