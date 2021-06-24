@@ -57,7 +57,6 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
     readXlsxFile(inputEl.current.files[0], { schema })
       .then(function ({ rows }) {
         const name = pathOr('', ['current', 'files', '0', 'name'], inputEl)
-        console.log(rows)
 
         setLoading(false)
         setRows(rows)
