@@ -143,7 +143,8 @@ const Manager = ({ tokenFcm }) => {
   }
 
   const handleClickUpdate = () => {
-    updateAdsByAccount(formSearch.getFieldValue('account'), { tokenFcm })
+    formSearch.submit()
+    updateAdsByAccount(formSearch.getFieldValue('account'), { query: formValues, tokenFcm })
   }
 
   useEffect(() => {
