@@ -1,6 +1,7 @@
 import React from 'react'
 import { Table, Tag } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
+import { join } from 'ramda'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -76,6 +77,27 @@ const columns = ({ handleClickEdit }) => [
   }
 ]
 
+const expandedRowRender = (record) => {
+  const columns = [
+    { title: 'Departamento', dataIndex: 'department', key: 'department' },
+    { title: 'cause_id', dataIndex: 'cause_id', key: 'cause_id' },
+    { title: 'Tipo', dataIndex: 'type', key: 'type' },
+    { title: 'Código', dataIndex: 'code', key: 'code' },
+    {
+      title: 'Referência',
+      dataIndex: 'references',
+      key: 'references',
+      render: join('\n')
+    },
+    { title: 'Mensagem', dataIndex: 'message', key: 'message' }
+  ]
+
+  console.log(record.logErrors)
+  return (
+    <Table columns={columns} dataSource={record.logErrors} pagination={false} />
+  )
+}
+
 const AdList = ({
   datasource,
   handleClickEdit,
@@ -90,6 +112,10 @@ const AdList = ({
       columns={columns({ handleClickEdit })}
       loading={loading}
       dataSource={datasource}
+      expandable={{
+        expandedRowRender,
+        rowExpandable: (record) => record.logErrors.length > 0
+      }}
     />
   )
 }
