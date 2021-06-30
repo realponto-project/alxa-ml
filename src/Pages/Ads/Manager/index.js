@@ -39,6 +39,7 @@ const Manager = ({ tokenFcm }) => {
 
     try {
       const { data } = await getAll({ ...formValues, order, page, limit })
+
       setSource(map((item) => ({ ...item, key: item.id }), data.source))
       setTotal(data.total)
     } catch (error) {}
@@ -144,7 +145,10 @@ const Manager = ({ tokenFcm }) => {
 
   const handleClickUpdate = () => {
     formSearch.submit()
-    updateAdsByAccount(formSearch.getFieldValue('account'), { query: formValues, tokenFcm })
+    updateAdsByAccount(formSearch.getFieldValue('account'), {
+      query: formValues,
+      tokenFcm
+    })
   }
 
   useEffect(() => {
