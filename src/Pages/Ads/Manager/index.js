@@ -38,7 +38,12 @@ const Manager = ({ tokenFcm }) => {
     setLoading(true)
 
     try {
-      const { data } = await getAll({ ...formValues, order, page, limit })
+      const { data } = await getAll({
+        ...formValues,
+        order,
+        page,
+        limit
+      })
 
       setSource(map((item) => ({ ...item, key: item.id }), data.source))
       setTotal(data.total)
@@ -153,7 +158,7 @@ const Manager = ({ tokenFcm }) => {
 
   useEffect(() => {
     getAllAds()
-  }, [page, formValues, order])
+  }, [page, formValues, order, limit])
 
   useEffect(() => {
     getAllAccounts().then(({ data }) => {

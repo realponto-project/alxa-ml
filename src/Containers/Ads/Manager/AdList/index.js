@@ -1,21 +1,23 @@
 import React from 'react'
 import { Table, Tag } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
-import { join } from 'ramda'
+import { join, pipe, split } from 'ramda'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
-    updated: 'lime',
+    updated: 'green',
     unupdated: 'orange',
     waiting_update: 'blue',
-    error: 'red'
+    error: 'red',
+    not_update: 'purple',
   }[status]
 
   const value = {
     updated: 'Atualizado',
     unupdated: 'Desatualizado',
     waiting_update: 'Aguardoando atualização',
-    error: 'Erro ao atualizar'
+    error: 'Erro ao atualizar',
+    not_update: 'Não deve atualizar',
   }[status]
 
   return <Tag color={color}>{value}</Tag>
@@ -23,7 +25,7 @@ const TagUpdateStatus = ({ status }) => {
 
 const TagStatus = ({ status }) => {
   const color = {
-    active: 'lime',
+    active: 'green',
     payment_required: 'red',
     under_review: 'orange',
     paused: 'blue',
@@ -43,6 +45,13 @@ const columns = ({ handleClickEdit }) => [
     sorter: true
   },
   {
+    title: 'Código',
+    dataIndex: 'item_id',
+    key: 'item_id',
+    fixed: 'left'
+    // render: pipe(split('-'),join('\n'))
+  },
+  {
     title: 'Descrição',
     dataIndex: 'title',
     key: 'title',
@@ -53,6 +62,15 @@ const columns = ({ handleClickEdit }) => [
     title: 'Preço',
     dataIndex: 'price',
     key: 'price',
+    fixed: 'left',
+    render: (price) =>
+      price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    sorter: true
+  },
+  {
+    title: 'Preço ML',
+    dataIndex: 'price_ml',
+    key: 'price_ml',
     fixed: 'left',
     render: (price) =>
       price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),

@@ -148,7 +148,7 @@ const Manager = ({
       <Col span={24}>
         <Card bordered={false}>
           <Row justify="end">
-            <Button type="link" onClick={handleClickUpdate}>
+            <Button type="link" disabled={formSearch.getFieldValue('update_status') === 'not_update'} onClick={handleClickUpdate}>
               Atualizar
             </Button>
           </Row>

@@ -195,7 +195,8 @@ const updateStatus = {
   updated: 'Atualizado',
   unupdated: 'Desatualizado',
   waiting_update: 'Aguardoando atualização',
-  error: 'Erro ao atualizar'
+  error: 'Erro ao atualizar',
+  not_update: 'Não deve atualizar',
 }
 
 export {
