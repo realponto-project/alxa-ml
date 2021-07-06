@@ -1,28 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { isEmpty, isNil, map, pathOr } from 'ramda'
 import readXlsxFile from 'read-excel-file'
-import { Button, Modal, Select } from 'antd'
+import { Button, Modal, Select, message } from 'antd'
 import { LoadingOutlined, UploadOutlined } from '@ant-design/icons'
+import * as yup from 'yup'
 
 const { Option } = Select
 
+const skuValue = {
+  prop: 'sku',
+  type: String
+}
+
+const priceValue = {
+  prop: 'price',
+  type: Number
+}
+
 const schema = {
-  SKU: {
-    prop: 'sku',
-    type: String
-  },
-  sku: {
-    prop: 'sku',
-    type: String
-  },
-  PRICE: {
-    prop: 'price',
-    type: Number
-  },
-  preço: {
-    prop: 'price',
-    type: Number
-  }
+  SKU: skuValue,
+  sku: skuValue,
+  Sku: skuValue,
+  PRICE: priceValue,
+  preço: priceValue,
+  Preço: priceValue,
+  price: priceValue
 }
 
 const MyUploadXlsx = ({ reference, handleChange, filename, loading }) => (
@@ -36,6 +38,7 @@ const MyUploadXlsx = ({ reference, handleChange, filename, loading }) => (
     <input
       ref={reference}
       id="upload-xlsx"
+      accept=".xls,.xlsx, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
       type="file"
       style={{ display: 'none' }}
       onChange={handleChange}
@@ -51,16 +54,33 @@ const ModalLoadAds = ({ visible, close, onSubmit, calcs }) => {
   const [filename, setFilename] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleChangeUpload = () => {
+  const handleChangeUpload = (e) => {
     setLoading(true)
     setFilename('')
+    const name = pathOr('', ['current', 'files', '0', 'name'], inputEl)
+
     readXlsxFile(inputEl.current.files[0], { schema })
-      .then(function ({ rows }) {
-        const name = pathOr('', ['current', 'files', '0', 'name'], inputEl)
+      .then(async function ({ rows }) {
+        console.log('rows', rows)
+
+        const schemaRows = yup.array().of(
+          yup.object().shape({
+            sku: yup.string().required(),
+            price: yup.number().required()
+          })
+        )
+
+        if (await schemaRows.isValid(rows)) {
+          setFilename(name)
+          setRows(rows)
+        } else {
+          message.error('Arquivo inválido')
+          if (inputEl.current) {
+            inputEl.current.value = ''
+          }
+        }
 
         setLoading(false)
-        setRows(rows)
-        setFilename(name)
       })
       .catch((err) => console.error('err', err))
   }
