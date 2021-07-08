@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { compose, isNil, length, map, pathOr } from 'ramda'
-import { Form, message } from 'antd'
+import { Form } from 'antd'
 import { connect } from 'react-redux'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
 import { getAll, getCusmtomerById, updateAds } from '../../../Services/Ads'
 import {
   getAllAccounts,
-  getLoaderAdsByMlAccountId,
   updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
@@ -26,9 +25,7 @@ const Manager = ({ tokenFcm }) => {
   const [order, setOrder] = useState([])
   const [total, setTotal] = useState(10)
   const [formSearch] = Form.useForm()
-  const [formLoadAd] = Form.useForm()
   const [formValues, setFormValues] = useState({})
-  const [modalSyncIsVisible, setModalSyncIsVisible] = useState(false)
   const [modalUpdatePriceIsVisible, setModalUpdatePriceIsVisible] = useState(
     false
   )
@@ -97,35 +94,6 @@ const Manager = ({ tokenFcm }) => {
       console.error(err)
     }
   }
-
-  const handleSubmitSync = async ({
-    mlAccountId,
-    lastSyncAds = '1990-01-01T00:00:00'
-  }) => {
-    if (!mlAccountId) return
-    setLoading(true)
-
-    getLoaderAdsByMlAccountId(mlAccountId, {
-      tokenFcm,
-      date: new Date(lastSyncAds)
-    })
-      .then((response) => {
-        setModalSyncIsVisible(false)
-        setLoading(false)
-        if (response.status === 200) {
-          message.info(
-            <p>
-              Pode demorar um tempo até que os anúncios sejam carregados,
-              <br />
-              será enviado uma notificação assim que for concluído
-            </p>
-          )
-        }
-      })
-      // eslint-disable-next-line node/handle-callback-err
-      .catch((err) => setLoading(false))
-  }
-
   const handleClearForm = () => {
     formSearch.resetFields()
     setPage(1)
@@ -136,11 +104,6 @@ const Manager = ({ tokenFcm }) => {
   const handleSubmitForm = (formData) => {
     setPage(1)
     setFormValues(formData)
-  }
-
-  const closeModalSync = () => {
-    formLoadAd.resetFields()
-    setModalSyncIsVisible(false)
   }
 
   const handleSubmitUpdatePrice = ({ rows, calcPriceId }) => {
@@ -177,7 +140,6 @@ const Manager = ({ tokenFcm }) => {
   return (
     <ManagerContainer
       pagination={{ total, current: page, pageSize: limit }}
-      formLoadAd={formLoadAd}
       accounts={accounts}
       closeModalAdd={closeModalAdd}
       expand={expand}
@@ -187,17 +149,13 @@ const Manager = ({ tokenFcm }) => {
       handleClickEdit={handleClickEdit}
       handleClickExpand={handleClickExpand}
       handleSubmitForm={handleSubmitForm}
-      handleSubmitSync={handleSubmitSync}
       loading={loading}
       modelTitle={isNil(id) ? 'Cadastro cliente' : 'Atualizar cliente'}
-      modalSyncIsVisible={modalSyncIsVisible}
       onChangeTable={onChangeTable}
       openModalAdd={() => setVisibleModalAdd(true)}
       source={source}
       limit={limit}
       visibleModalAdd={visibleModalAdd}
-      opneModalSync={() => setModalSyncIsVisible(true)}
-      closeModalSync={closeModalSync}
       calcs={calcs}
       modalUpdatePriceIsVisible={modalUpdatePriceIsVisible}
       closeModalUpdatePrice={() => setModalUpdatePriceIsVisible(false)}
