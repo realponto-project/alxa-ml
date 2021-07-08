@@ -5,7 +5,6 @@ import { keys, map } from 'ramda'
 
 import AdList from './AdList'
 import { mlStatus, updateStatus } from '../../../utils/orderStatus'
-import ModalLoadAds from './ModalLoadAds'
 import ModaaUpdatePrices from './ModalUpdatePrice'
 
 const { Title } = Typography
@@ -17,16 +16,11 @@ const Manager = ({
   source,
   onChangeTable,
   accounts,
-  formLoadAd,
-  handleSubmitSync,
   formSearch,
   handleClearForm,
   handleSubmitForm,
-  modalSyncIsVisible,
-  opneModalSync,
   calcs,
   pagination,
-  closeModalSync,
   modalUpdatePriceIsVisible,
   closeModalUpdatePrice,
   openModalUpdatePrice,
@@ -48,11 +42,6 @@ const Manager = ({
             </Col>
             <Col span={12} style={{ textAlign: 'right' }}>
               <Row gutter={[0, 8]} justify="end">
-                <Col span={24}>
-                  <Button style={{ width: 200 }} onClick={opneModalSync}>
-                    Carregar meus anúncios
-                  </Button>
-                </Col>
                 <Col span={24}>
                   <Button style={{ width: 200 }} onClick={openModalUpdatePrice}>
                     Atualizar preços
@@ -148,7 +137,12 @@ const Manager = ({
       <Col span={24}>
         <Card bordered={false}>
           <Row justify="end">
-            <Button type="link" disabled={formSearch.getFieldValue('update_status') === 'not_update'} onClick={handleClickUpdate}>
+            <Button
+              type="link"
+              disabled={
+                formSearch.getFieldValue('update_status') === 'not_update'
+              }
+              onClick={handleClickUpdate}>
               Atualizar
             </Button>
           </Row>
@@ -162,14 +156,6 @@ const Manager = ({
         </Card>
       </Col>
 
-      <ModalLoadAds
-        visible={modalSyncIsVisible}
-        close={closeModalSync}
-        form={formLoadAd}
-        onSubmit={handleSubmitSync}
-        loading={loading}
-        accounts={accounts}
-      />
       <ModaaUpdatePrices
         visible={modalUpdatePriceIsVisible}
         close={closeModalUpdatePrice}
