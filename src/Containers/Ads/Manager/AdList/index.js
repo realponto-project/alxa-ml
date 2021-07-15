@@ -16,7 +16,7 @@ const TagUpdateStatus = ({ status }) => {
   const value = {
     updated: 'Atualizado',
     unupdated: 'Desatualizado',
-    waiting_update: 'Aguardoando atualização',
+    waiting_update: 'Aguardando atualização',
     error: 'Erro ao atualizar',
     not_update: 'Não deve atualizar'
   }[status]
