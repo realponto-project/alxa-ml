@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { compose, isNil, length, map, pathOr } from 'ramda'
-import { Form } from 'antd'
+import {
+  applySpec,
+  compose,
+  forEach,
+  isNil,
+  length,
+  map,
+  pathOr,
+  prop,
+  propOr
+} from 'ramda'
+import { Form, message } from 'antd'
 import { connect } from 'react-redux'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
-import { getAll, getCusmtomerById, updateAds } from '../../../Services/Ads'
+import { getAll, updateAds, updateAd } from '../../../Services/Ads'
 import {
   getAllAccounts,
   updateAdsByAccount
@@ -17,6 +27,7 @@ const Manager = ({ tokenFcm }) => {
   const [loading, setLoading] = useState(false)
   const [expand, setExpand] = useState(false)
   const [formAdd] = Form.useForm()
+  const [formUpdateAds] = Form.useForm()
   const [id, setId] = useState()
   const [source, setSource] = useState([])
   const [visibleModalAdd, setVisibleModalAdd] = useState(false)
@@ -26,10 +37,12 @@ const Manager = ({ tokenFcm }) => {
   const [total, setTotal] = useState(10)
   const [formSearch] = Form.useForm()
   const [formValues, setFormValues] = useState({})
+  const [modalUpdateAdsIsVisible, setModalUpdateAdsIsVisible] = useState(false)
   const [modalUpdatePriceIsVisible, setModalUpdatePriceIsVisible] = useState(
     false
   )
   const [calcs, setCalcs] = useState([])
+  const [adChoosed, setAdChoosed] = useState()
 
   const getAllAds = async () => {
     setLoading(true)
@@ -80,20 +93,13 @@ const Manager = ({ tokenFcm }) => {
 
   const handleClickExpand = () => setExpand(!expand)
 
-  const handleClickEdit = async (id) => {
-    try {
-      setId(id)
-      const { status, data } = await getCusmtomerById(id)
-
-      if (status !== 200) throw new Error('Customer not found')
-
-      setExpand(!isNil(pathOr(null, ['address'], data)))
-      setVisibleModalAdd(true)
-      formAdd.setFieldsValue(buildFormValuesCustomer(data))
-    } catch (err) {
-      console.error(err)
-    }
+  const handleClickEdit = async (record) => {
+    console.log('object', record)
+    setAdChoosed(record)
+    formUpdateAds.setFieldsValue(record)
+    setModalUpdateAdsIsVisible(true)
   }
+
   const handleClearForm = () => {
     formSearch.resetFields()
     setPage(1)
@@ -137,13 +143,38 @@ const Manager = ({ tokenFcm }) => {
     )
   }, [])
 
+  const closeModalUpdateAd = () => {
+    setModalUpdateAdsIsVisible(false)
+    formUpdateAds.resetFields()
+  }
+
+  const handleSubmitUpdateAd = (values) => {
+    const id = propOr('', 'id', adChoosed)
+
+    updateAd(id, values)
+      .then(() => {
+        getAllAds()
+        setModalUpdateAdsIsVisible(false)
+        message.success('O anúncio foi atualizado com sucesso')
+      })
+      .catch((err) => {
+        const causes = pathOr([], ['response', 'data', 'data', 'cause'], err)
+        forEach((cause) => {
+          message.error(cause.message)
+        }, causes)
+      })
+  }
+
   return (
     <ManagerContainer
       pagination={{ total, current: page, pageSize: limit }}
+      handleSubmitUpdateAd={handleSubmitUpdateAd}
       accounts={accounts}
       closeModalAdd={closeModalAdd}
       expand={expand}
       formAdd={formAdd}
+      formUpdateAds={formUpdateAds}
+      closeModalUpdateAd={closeModalUpdateAd}
       formSearch={formSearch}
       handleClearForm={handleClearForm}
       handleClickEdit={handleClickEdit}
@@ -158,6 +189,7 @@ const Manager = ({ tokenFcm }) => {
       visibleModalAdd={visibleModalAdd}
       calcs={calcs}
       modalUpdatePriceIsVisible={modalUpdatePriceIsVisible}
+      modalUpdateAdsIsVisible={modalUpdateAdsIsVisible}
       closeModalUpdatePrice={() => setModalUpdatePriceIsVisible(false)}
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
