@@ -6,6 +6,7 @@ import { keys, map } from 'ramda'
 import AdList from './AdList'
 import { mlStatus, updateStatus } from '../../../utils/orderStatus'
 import ModaaUpdatePrices from './ModalUpdatePrice'
+import ModalUpdateAds from './ModalUpdateAds'
 
 const { Title } = Typography
 const { Option } = Select
@@ -17,15 +18,19 @@ const Manager = ({
   onChangeTable,
   accounts,
   formSearch,
+  formUpdateAds,
   handleClearForm,
   handleSubmitForm,
+  closeModalUpdateAd,
   calcs,
   pagination,
   modalUpdatePriceIsVisible,
   closeModalUpdatePrice,
   openModalUpdatePrice,
   handleClickUpdate,
-  handleSubmitUpdatePrice
+  handleSubmitUpdatePrice,
+  modalUpdateAdsIsVisible,
+  handleSubmitUpdateAd
 }) => {
   return (
     <Row gutter={[8, 16]}>
@@ -155,6 +160,13 @@ const Manager = ({
           />
         </Card>
       </Col>
+
+      <ModalUpdateAds
+        visible={modalUpdateAdsIsVisible}
+        form={formUpdateAds}
+        handleClose={closeModalUpdateAd}
+        handleSubmit={handleSubmitUpdateAd}
+      />
 
       <ModaaUpdatePrices
         visible={modalUpdatePriceIsVisible}

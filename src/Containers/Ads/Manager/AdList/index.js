@@ -1,7 +1,8 @@
 import React from 'react'
-import { Table, Tag } from 'antd'
+import { Button, Table, Tag } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
-import { join, pipe, split } from 'ramda'
+import { join } from 'ramda'
+import { EditOutlined } from '@ant-design/icons'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -9,15 +10,15 @@ const TagUpdateStatus = ({ status }) => {
     unupdated: 'orange',
     waiting_update: 'blue',
     error: 'red',
-    not_update: 'purple',
+    not_update: 'purple'
   }[status]
 
   const value = {
     updated: 'Atualizado',
     unupdated: 'Desatualizado',
-    waiting_update: 'Aguardoando atualização',
+    waiting_update: 'Aguardando atualização',
     error: 'Erro ao atualizar',
-    not_update: 'Não deve atualizar',
+    not_update: 'Não deve atualizar'
   }[status]
 
   return <Tag color={color}>{value}</Tag>
@@ -47,22 +48,21 @@ const columns = ({ handleClickEdit }) => [
   {
     title: 'Código',
     dataIndex: 'item_id',
-    key: 'item_id',
-    fixed: 'left'
+    width: 180,
+    key: 'item_id'
     // render: pipe(split('-'),join('\n'))
   },
   {
     title: 'Descrição',
     dataIndex: 'title',
+    width: 450,
     key: 'title',
-    fixed: 'left',
     sorter: true
   },
   {
     title: 'Preço',
     dataIndex: 'price',
     key: 'price',
-    fixed: 'left',
     render: (price) =>
       price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
     sorter: true
@@ -71,7 +71,6 @@ const columns = ({ handleClickEdit }) => [
     title: 'Preço ML',
     dataIndex: 'price_ml',
     key: 'price_ml',
-    fixed: 'left',
     render: (price) =>
       price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
     sorter: true
@@ -79,8 +78,8 @@ const columns = ({ handleClickEdit }) => [
   {
     title: 'Status de atualização',
     dataIndex: 'update_status',
+    width: 180,
     align: 'center',
-    fixed: 'left',
     render: (update_status) => {
       return <TagUpdateStatus status={update_status} />
     }
@@ -89,9 +88,22 @@ const columns = ({ handleClickEdit }) => [
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    fixed: 'left',
+    width: 180,
     align: 'center',
     render: (status) => <TagStatus status={status} />
+  },
+  {
+    title: 'Editar',
+    dataIndex: 'id',
+    key: 'id',
+    fixed: 'right',
+    width: 100,
+    align: 'center',
+    render: (_, record) => (
+      <Button type="link">
+        <EditOutlined onClick={() => handleClickEdit(record)} />
+      </Button>
+    )
   }
 ]
 
@@ -125,6 +137,7 @@ const AdList = ({
 }) => {
   return (
     <Table
+      scroll={{ x: 1500 }}
       pagination={pagination}
       onChange={onChangeTable}
       columns={columns({ handleClickEdit })}
