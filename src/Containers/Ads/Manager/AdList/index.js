@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Table, Tag } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
 import { join } from 'ramda'
-import { EditOutlined } from '@ant-design/icons'
+import { AreaChartOutlined, EditOutlined } from '@ant-design/icons'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -37,7 +37,7 @@ const TagStatus = ({ status }) => {
 
   return <Tag color={color}>{value}</Tag>
 }
-const columns = ({ handleClickEdit }) => [
+const columns = ({ handleClickEdit, handleClickGraphc }) => [
   {
     title: 'SKU',
     dataIndex: 'sku',
@@ -93,9 +93,21 @@ const columns = ({ handleClickEdit }) => [
     render: (status) => <TagStatus status={status} />
   },
   {
-    title: 'Editar',
+    title: 'Gráfico',
     dataIndex: 'id',
     key: 'id',
+    width: 100,
+    align: 'center',
+    render: (id) => (
+      <Button type="link">
+        <AreaChartOutlined onClick={() => handleClickGraphc(id)} />
+      </Button>
+    )
+  },
+  {
+    title: 'Editar',
+    // dataIndex: 'id',
+    // key: 'id',
     fixed: 'right',
     width: 100,
     align: 'center',
@@ -131,6 +143,7 @@ const expandedRowRender = (record) => {
 const AdList = ({
   datasource,
   handleClickEdit,
+  handleClickGraphc,
   loading,
   onChangeTable,
   pagination
@@ -140,7 +153,7 @@ const AdList = ({
       scroll={{ x: 1500 }}
       pagination={pagination}
       onChange={onChangeTable}
-      columns={columns({ handleClickEdit })}
+      columns={columns({ handleClickEdit, handleClickGraphc })}
       loading={loading}
       dataSource={datasource}
       expandable={{

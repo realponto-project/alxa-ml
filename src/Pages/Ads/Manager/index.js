@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {
-  applySpec,
-  compose,
-  forEach,
-  isNil,
-  length,
-  map,
-  pathOr,
-  prop,
-  propOr
-} from 'ramda'
+import { compose, forEach, isNil, length, map, pathOr, propOr } from 'ramda'
 import { Form, message } from 'antd'
 import { connect } from 'react-redux'
 
@@ -20,7 +10,7 @@ import {
   updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
-import { buildFormValuesCustomer } from '../../../utils/Specs/Customer'
+import { getAllChangePrice } from '../../../Services/ChangePrice'
 
 const Manager = ({ tokenFcm }) => {
   const [accounts, setAccounts] = useState([])
@@ -37,11 +27,13 @@ const Manager = ({ tokenFcm }) => {
   const [total, setTotal] = useState(10)
   const [formSearch] = Form.useForm()
   const [formValues, setFormValues] = useState({})
+  const [modalGraphcIsVisible, setModalGraphcIsVisible] = useState(false)
   const [modalUpdateAdsIsVisible, setModalUpdateAdsIsVisible] = useState(false)
   const [modalUpdatePriceIsVisible, setModalUpdatePriceIsVisible] = useState(
     false
   )
   const [calcs, setCalcs] = useState([])
+  const [rowsChangePrice, setRowsChangePrice] = useState([])
   const [adChoosed, setAdChoosed] = useState()
 
   const getAllAds = async () => {
@@ -165,6 +157,18 @@ const Manager = ({ tokenFcm }) => {
       })
   }
 
+  const handleClickGraphc = async (mercadoLibreAdId) => {
+    try {
+      const { data } = await getAllChangePrice({ mercadoLibreAdId })
+
+      setRowsChangePrice(data)
+    } catch (error) {
+      console.error(error)
+    }
+
+    setModalGraphcIsVisible(true)
+  }
+
   return (
     <ManagerContainer
       pagination={{ total, current: page, pageSize: limit }}
@@ -178,6 +182,7 @@ const Manager = ({ tokenFcm }) => {
       formSearch={formSearch}
       handleClearForm={handleClearForm}
       handleClickEdit={handleClickEdit}
+      handleClickGraphc={handleClickGraphc}
       handleClickExpand={handleClickExpand}
       handleSubmitForm={handleSubmitForm}
       loading={loading}
@@ -194,6 +199,9 @@ const Manager = ({ tokenFcm }) => {
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
       handleClickUpdate={handleClickUpdate}
+      modalGraphcIsVisible={modalGraphcIsVisible}
+      handelCancel={() => setModalGraphcIsVisible(false)}
+      rowsChangePrice={rowsChangePrice}
     />
   )
 }
