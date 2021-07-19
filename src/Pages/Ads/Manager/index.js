@@ -10,6 +10,7 @@ import {
   updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
+import { getAllChangePrice } from '../../../Services/ChangePrice'
 
 const Manager = ({ tokenFcm }) => {
   const [accounts, setAccounts] = useState([])
@@ -26,11 +27,13 @@ const Manager = ({ tokenFcm }) => {
   const [total, setTotal] = useState(10)
   const [formSearch] = Form.useForm()
   const [formValues, setFormValues] = useState({})
+  const [modalGraphcIsVisible, setModalGraphcIsVisible] = useState(false)
   const [modalUpdateAdsIsVisible, setModalUpdateAdsIsVisible] = useState(false)
   const [modalUpdatePriceIsVisible, setModalUpdatePriceIsVisible] = useState(
     false
   )
   const [calcs, setCalcs] = useState([])
+  const [rowsChangePrice, setRowsChangePrice] = useState([])
   const [adChoosed, setAdChoosed] = useState()
 
   const getAllAds = async () => {
@@ -154,7 +157,7 @@ const Manager = ({ tokenFcm }) => {
       })
   }
 
-  const handelSyncPrice = async (values) => {
+  const handleSyncPrice = async (values) => {
     const { setSpin, id, sync } = values
 
     setSpin(true)
@@ -166,6 +169,18 @@ const Manager = ({ tokenFcm }) => {
       setSpin(false)
       console.error(error)
     }
+  }
+
+  const handleClickGraphc = async (mercadoLibreAdId) => {
+    try {
+      const { data } = await getAllChangePrice({ mercadoLibreAdId })
+
+      setRowsChangePrice(data)
+    } catch (error) {
+      console.error(error)
+    }
+
+    setModalGraphcIsVisible(true)
   }
 
   return (
@@ -181,6 +196,7 @@ const Manager = ({ tokenFcm }) => {
       formSearch={formSearch}
       handleClearForm={handleClearForm}
       handleClickEdit={handleClickEdit}
+      handleClickGraphc={handleClickGraphc}
       handleClickExpand={handleClickExpand}
       handleSubmitForm={handleSubmitForm}
       loading={loading}
@@ -197,7 +213,10 @@ const Manager = ({ tokenFcm }) => {
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
       handleClickUpdate={handleClickUpdate}
-      handelSyncPrice={handelSyncPrice}
+      handleSyncPrice={handleSyncPrice}
+      modalGraphcIsVisible={modalGraphcIsVisible}
+      handelCancel={() => setModalGraphcIsVisible(false)}
+      rowsChangePrice={rowsChangePrice}
     />
   )
 }

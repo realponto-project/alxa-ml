@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Button, Table, Tag, Tooltip } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
 import { join } from 'ramda'
-import { EditOutlined, SyncOutlined } from '@ant-design/icons'
+import { AreaChartOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -39,7 +39,7 @@ const TagStatus = ({ status }) => {
 
   return <Tag color={color}>{value}</Tag>
 }
-const columns = ({ handleClickEdit, handelSyncPrice }) => [
+const columns = ({ handleClickEdit, handleClickGraphc, handleSyncPrice }) => [
   {
     title: 'SKU',
     dataIndex: 'sku',
@@ -79,7 +79,7 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
             <Button
               type="link"
               onDoubleClick={() =>
-                handelSyncPrice({ setSpin, sync: 'price', id })
+                handleSyncPrice({ setSpin, sync: 'price', id })
               }>
               <SyncOutlined spin={spin} />
             </Button>
@@ -107,7 +107,7 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
             <Button
               type="link"
               onDoubleClick={() =>
-                handelSyncPrice({ setSpin, sync: 'price_ml', id })
+                handleSyncPrice({ setSpin, sync: 'price_ml', id })
               }>
               <SyncOutlined spin={spin} />
             </Button>
@@ -135,9 +135,21 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
     render: (status) => <TagStatus status={status} />
   },
   {
-    title: 'Editar',
+    title: 'Gráfico',
     dataIndex: 'id',
     key: 'id',
+    width: 100,
+    align: 'center',
+    render: (id) => (
+      <Button type="link">
+        <AreaChartOutlined onClick={() => handleClickGraphc(id)} />
+      </Button>
+    )
+  },
+  {
+    title: 'Editar',
+    // dataIndex: 'id',
+    // key: 'id',
     fixed: 'right',
     width: 100,
     align: 'center',
@@ -173,17 +185,18 @@ const expandedRowRender = (record) => {
 const AdList = ({
   datasource,
   handleClickEdit,
+  handleClickGraphc,
   loading,
   onChangeTable,
   pagination,
-  handelSyncPrice
+  handleSyncPrice
 }) => {
   return (
     <Table
       scroll={{ x: 1600 }}
       pagination={pagination}
       onChange={onChangeTable}
-      columns={columns({ handleClickEdit, handelSyncPrice })}
+      columns={columns({ handleClickEdit, handleClickGraphc, handleSyncPrice })}
       loading={loading}
       dataSource={datasource}
       expandable={{

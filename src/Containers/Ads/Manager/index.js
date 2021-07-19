@@ -1,7 +1,18 @@
-import React from 'react'
-import { Button, Card, Col, Input, Row, Typography, Select, Form } from 'antd'
+import React, { useEffect } from 'react'
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  Row,
+  Typography,
+  Select,
+  Form,
+  Modal
+} from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
-import { keys, map } from 'ramda'
+import { filter, keys, map, pipe, prepend, propEq } from 'ramda'
+import moment from 'moment'
 
 import AdList from './AdList'
 import { mlStatus, updateStatus } from '../../../utils/orderStatus'
@@ -13,6 +24,7 @@ const { Option } = Select
 
 const Manager = ({
   handleClickEdit,
+  handleClickGraphc,
   loading,
   source,
   onChangeTable,
@@ -31,8 +43,64 @@ const Manager = ({
   handleSubmitUpdatePrice,
   modalUpdateAdsIsVisible,
   handleSubmitUpdateAd,
-  handelSyncPrice
+  handleSyncPrice,
+  modalGraphcIsVisible,
+  handelCancel,
+  rowsChangePrice
 }) => {
+  useEffect(() => {
+    const drawChart = () => {
+      const data_1 = window.google.visualization.arrayToDataTable(
+        pipe(
+          filter(propEq('field', 'price')),
+          map(({ createdAt, oldPrice, newPrice }) => {
+            const resp = []
+            resp[0] = moment(createdAt).format('L')
+            resp[1] = oldPrice
+            resp[2] = newPrice
+
+            return resp
+          }),
+          prepend(['Year', 'Preço antigo', 'Preço novo'])
+        )(rowsChangePrice)
+      )
+
+      const data_2 = window.google.visualization.arrayToDataTable(
+        pipe(
+          filter(propEq('field', 'price_ml')),
+          map(({ createdAt, oldPrice, newPrice }) => {
+            const resp = []
+            resp[0] = moment(createdAt).format('L')
+            resp[1] = oldPrice
+            resp[2] = newPrice
+
+            return resp
+          }),
+          prepend(['Year', 'Preço antigo', 'Preço novo'])
+        )(rowsChangePrice)
+      )
+
+      const options = {
+        title: 'Company Performance',
+        curveType: 'function',
+        legend: { position: 'bottom' }
+      }
+
+      const chart_1 = new window.google.visualization.LineChart(
+        document.getElementById('curve_chart_1')
+      )
+      chart_1.draw(data_1, options)
+
+      const chart_2 = new window.google.visualization.LineChart(
+        document.getElementById('curve_chart_2')
+      )
+      chart_2.draw(data_2, options)
+    }
+
+    window.google.charts.load('current', { packages: ['corechart'] })
+    window.google.charts.setOnLoadCallback(drawChart)
+  }, [modalGraphcIsVisible])
+
   return (
     <Row gutter={[8, 16]}>
       <Col span={24}>
@@ -153,10 +221,11 @@ const Manager = ({
             </Button>
           </Row>
           <AdList
-            handelSyncPrice={handelSyncPrice}
+            handleSyncPrice={handleSyncPrice}
             onChangeTable={onChangeTable}
             datasource={source}
             handleClickEdit={handleClickEdit}
+            handleClickGraphc={handleClickGraphc}
             loading={loading}
             pagination={pagination}
           />
@@ -176,6 +245,19 @@ const Manager = ({
         onSubmit={handleSubmitUpdatePrice}
         calcs={calcs}
       />
+
+      <Modal
+        footer={null}
+        width={700}
+        visible={modalGraphcIsVisible}
+        onCancel={handelCancel}>
+        <div
+          id="curve_chart_1"
+          style={{ width: '450px', height: '250px' }}></div>
+        <div
+          id="curve_chart_2"
+          style={{ width: '450px', height: '250px' }}></div>
+      </Modal>
     </Row>
   )
 }
