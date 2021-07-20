@@ -11,7 +11,7 @@ const appId = process.env.REACT_APP_APP_ID_ML
 const uri = process.env.REACT_APP_URI_ML
 const url = `http://auth.mercadolivre.com.br/authorization?response_type=code&client_id=${appId}&redirect_uri=${uri}`
 
-const Accounts = ({ setToken }) => {
+const Accounts = ({ setToken, tokenFcm }) => {
   const [loading, setLoading] = useState(false)
   const [page, setPage] = useState(1)
   const [source, setSource] = useState([])
@@ -49,7 +49,7 @@ const Accounts = ({ setToken }) => {
       const {
         status,
         data: { token }
-      } = await createAccountService({ code })
+      } = await createAccountService({ code, tokenFcm })
 
       if (status === 201) {
         setModalSuccessLinkIsVisible(true)
@@ -81,6 +81,10 @@ const mapDispatchToProps = (dispatch) => ({
   setToken: (payload) => dispatch({ type: 'USER_LOGGED', payload })
 })
 
-const enhanced = compose(connect(null, mapDispatchToProps))
+const mapStateToProps = ({ tokenFcm }) => ({
+  tokenFcm
+})
+
+const enhanced = compose(connect(mapStateToProps, mapDispatchToProps))
 
 export default enhanced(Accounts)

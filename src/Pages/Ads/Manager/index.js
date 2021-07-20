@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { compose, isNil, length, map, pathOr } from 'ramda'
+import { compose, forEach, isNil, length, map, pathOr, propOr } from 'ramda'
 import { Form, message } from 'antd'
 import { connect } from 'react-redux'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
-import { getAll, getCusmtomerById, updateAds } from '../../../Services/Ads'
+import { getAll, updateAds, updateAd } from '../../../Services/Ads'
 import {
   getAllAccounts,
-  getLoaderAdsByMlAccountId,
   updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
-import { buildFormValuesCustomer } from '../../../utils/Specs/Customer'
+import { getAllChangePrice } from '../../../Services/ChangePrice'
 
 const Manager = ({ tokenFcm }) => {
   const [accounts, setAccounts] = useState([])
   const [loading, setLoading] = useState(false)
   const [expand, setExpand] = useState(false)
   const [formAdd] = Form.useForm()
+  const [formUpdateAds] = Form.useForm()
   const [id, setId] = useState()
   const [source, setSource] = useState([])
   const [visibleModalAdd, setVisibleModalAdd] = useState(false)
@@ -26,19 +26,27 @@ const Manager = ({ tokenFcm }) => {
   const [order, setOrder] = useState([])
   const [total, setTotal] = useState(10)
   const [formSearch] = Form.useForm()
-  const [formLoadAd] = Form.useForm()
   const [formValues, setFormValues] = useState({})
-  const [modalSyncIsVisible, setModalSyncIsVisible] = useState(false)
+  const [modalGraphcIsVisible, setModalGraphcIsVisible] = useState(false)
+  const [modalUpdateAdsIsVisible, setModalUpdateAdsIsVisible] = useState(false)
   const [modalUpdatePriceIsVisible, setModalUpdatePriceIsVisible] = useState(
     false
   )
   const [calcs, setCalcs] = useState([])
+  const [rowsChangePrice, setRowsChangePrice] = useState([])
+  const [adChoosed, setAdChoosed] = useState()
 
   const getAllAds = async () => {
     setLoading(true)
 
     try {
-      const { data } = await getAll({ ...formValues, order, page, limit })
+      const { data } = await getAll({
+        ...formValues,
+        order,
+        page,
+        limit
+      })
+
       setSource(map((item) => ({ ...item, key: item.id }), data.source))
       setTotal(data.total)
     } catch (error) {}
@@ -77,47 +85,10 @@ const Manager = ({ tokenFcm }) => {
 
   const handleClickExpand = () => setExpand(!expand)
 
-  const handleClickEdit = async (id) => {
-    try {
-      setId(id)
-      const { status, data } = await getCusmtomerById(id)
-
-      if (status !== 200) throw new Error('Customer not found')
-
-      setExpand(!isNil(pathOr(null, ['address'], data)))
-      setVisibleModalAdd(true)
-      formAdd.setFieldsValue(buildFormValuesCustomer(data))
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const handleSubmitSync = async ({
-    mlAccountId,
-    lastSyncAds = '1990-01-01T00:00:00'
-  }) => {
-    if (!mlAccountId) return
-    setLoading(true)
-
-    getLoaderAdsByMlAccountId(mlAccountId, {
-      tokenFcm,
-      date: new Date(lastSyncAds)
-    })
-      .then((response) => {
-        setModalSyncIsVisible(false)
-        setLoading(false)
-        if (response.status === 200) {
-          message.info(
-            <p>
-              Pode demorar um tempo até que os anúncios sejam carregados,
-              <br />
-              será enviado uma notificação assim que for concluído
-            </p>
-          )
-        }
-      })
-      // eslint-disable-next-line node/handle-callback-err
-      .catch((err) => setLoading(false))
+  const handleClickEdit = async (record) => {
+    setAdChoosed(record)
+    formUpdateAds.setFieldsValue(record)
+    setModalUpdateAdsIsVisible(true)
   }
 
   const handleClearForm = () => {
@@ -132,23 +103,22 @@ const Manager = ({ tokenFcm }) => {
     setFormValues(formData)
   }
 
-  const closeModalSync = () => {
-    formLoadAd.resetFields()
-    setModalSyncIsVisible(false)
-  }
-
   const handleSubmitUpdatePrice = ({ rows, calcPriceId }) => {
     updateAds({ rows, calcPriceId, tokenFcm })
     setModalUpdatePriceIsVisible(false)
   }
 
   const handleClickUpdate = () => {
-    updateAdsByAccount(formSearch.getFieldValue('account'))
+    formSearch.submit()
+    updateAdsByAccount(formSearch.getFieldValue('account'), {
+      query: formValues,
+      tokenFcm
+    })
   }
 
   useEffect(() => {
     getAllAds()
-  }, [page, formValues, order])
+  }, [page, formValues, order, limit])
 
   useEffect(() => {
     getAllAccounts().then(({ data }) => {
@@ -164,36 +134,73 @@ const Manager = ({ tokenFcm }) => {
     )
   }, [])
 
+  const closeModalUpdateAd = () => {
+    setModalUpdateAdsIsVisible(false)
+    formUpdateAds.resetFields()
+  }
+
+  const handleSubmitUpdateAd = (values) => {
+    const id = propOr('', 'id', adChoosed)
+
+    updateAd(id, values)
+      .then(() => {
+        getAllAds()
+        setModalUpdateAdsIsVisible(false)
+        message.success('O anúncio foi atualizado com sucesso')
+      })
+      .catch((err) => {
+        const causes = pathOr([], ['response', 'data', 'data', 'cause'], err)
+        forEach((cause) => {
+          message.error(cause.message)
+        }, causes)
+      })
+  }
+
+  const handleClickGraphc = async (mercadoLibreAdId) => {
+    try {
+      const { data } = await getAllChangePrice({ mercadoLibreAdId })
+
+      setRowsChangePrice(data)
+    } catch (error) {
+      console.error(error)
+    }
+
+    setModalGraphcIsVisible(true)
+  }
+
   return (
     <ManagerContainer
       pagination={{ total, current: page, pageSize: limit }}
-      formLoadAd={formLoadAd}
+      handleSubmitUpdateAd={handleSubmitUpdateAd}
       accounts={accounts}
       closeModalAdd={closeModalAdd}
       expand={expand}
       formAdd={formAdd}
+      formUpdateAds={formUpdateAds}
+      closeModalUpdateAd={closeModalUpdateAd}
       formSearch={formSearch}
       handleClearForm={handleClearForm}
       handleClickEdit={handleClickEdit}
+      handleClickGraphc={handleClickGraphc}
       handleClickExpand={handleClickExpand}
       handleSubmitForm={handleSubmitForm}
-      handleSubmitSync={handleSubmitSync}
       loading={loading}
       modelTitle={isNil(id) ? 'Cadastro cliente' : 'Atualizar cliente'}
-      modalSyncIsVisible={modalSyncIsVisible}
       onChangeTable={onChangeTable}
       openModalAdd={() => setVisibleModalAdd(true)}
       source={source}
       limit={limit}
       visibleModalAdd={visibleModalAdd}
-      opneModalSync={() => setModalSyncIsVisible(true)}
-      closeModalSync={closeModalSync}
       calcs={calcs}
       modalUpdatePriceIsVisible={modalUpdatePriceIsVisible}
+      modalUpdateAdsIsVisible={modalUpdateAdsIsVisible}
       closeModalUpdatePrice={() => setModalUpdatePriceIsVisible(false)}
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
       handleClickUpdate={handleClickUpdate}
+      modalGraphcIsVisible={modalGraphcIsVisible}
+      handelCancel={() => setModalGraphcIsVisible(false)}
+      rowsChangePrice={rowsChangePrice}
     />
   )
 }
