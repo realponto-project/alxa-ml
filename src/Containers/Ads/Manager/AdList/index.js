@@ -134,7 +134,6 @@ const expandedRowRender = (record) => {
     { title: 'Mensagem', dataIndex: 'message', key: 'message' }
   ]
 
-  console.log(record.logErrors)
   return (
     <Table columns={columns} dataSource={record.logErrors} pagination={false} />
   )

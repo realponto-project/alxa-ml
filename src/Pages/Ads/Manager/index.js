@@ -86,7 +86,6 @@ const Manager = ({ tokenFcm }) => {
   const handleClickExpand = () => setExpand(!expand)
 
   const handleClickEdit = async (record) => {
-    console.log('object', record)
     setAdChoosed(record)
     formUpdateAds.setFieldsValue(record)
     setModalUpdateAdsIsVisible(true)
