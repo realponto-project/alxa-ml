@@ -30,7 +30,8 @@ const Manager = ({
   handleClickUpdate,
   handleSubmitUpdatePrice,
   modalUpdateAdsIsVisible,
-  handleSubmitUpdateAd
+  handleSubmitUpdateAd,
+  handelSyncPrice
 }) => {
   return (
     <Row gutter={[8, 16]}>
@@ -152,6 +153,7 @@ const Manager = ({
             </Button>
           </Row>
           <AdList
+            handelSyncPrice={handelSyncPrice}
             onChangeTable={onChangeTable}
             datasource={source}
             handleClickEdit={handleClickEdit}

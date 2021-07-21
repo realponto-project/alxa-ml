@@ -1,26 +1,15 @@
 import React, { useEffect, useState } from 'react'
-import {
-  applySpec,
-  compose,
-  forEach,
-  isNil,
-  length,
-  map,
-  pathOr,
-  prop,
-  propOr
-} from 'ramda'
+import { compose, forEach, isNil, length, map, pathOr, propOr } from 'ramda'
 import { Form, message } from 'antd'
 import { connect } from 'react-redux'
 
 import ManagerContainer from '../../../Containers/Ads/Manager'
-import { getAll, updateAds, updateAd } from '../../../Services/Ads'
+import { getAll, updateAds, updateAd, syncPrice } from '../../../Services/Ads'
 import {
   getAllAccounts,
   updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
-import { buildFormValuesCustomer } from '../../../utils/Specs/Customer'
 
 const Manager = ({ tokenFcm }) => {
   const [accounts, setAccounts] = useState([])
@@ -165,6 +154,20 @@ const Manager = ({ tokenFcm }) => {
       })
   }
 
+  const handelSyncPrice = async (values) => {
+    const { setSpin, id, sync } = values
+
+    setSpin(true)
+    try {
+      await syncPrice(id, { sync })
+      getAllAds()
+      setSpin(false)
+    } catch (error) {
+      setSpin(false)
+      console.error(error)
+    }
+  }
+
   return (
     <ManagerContainer
       pagination={{ total, current: page, pageSize: limit }}
@@ -194,6 +197,7 @@ const Manager = ({ tokenFcm }) => {
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
       handleClickUpdate={handleClickUpdate}
+      handelSyncPrice={handelSyncPrice}
     />
   )
 }

@@ -1,13 +1,14 @@
-import React from 'react'
-import { Button, Table, Tag } from 'antd'
+import React, { useState } from 'react'
+import { Button, Table, Tag, Tooltip } from 'antd'
 import { mlStatus } from '../../../../utils/orderStatus'
 import { join } from 'ramda'
-import { EditOutlined } from '@ant-design/icons'
+import { EditOutlined, SyncOutlined } from '@ant-design/icons'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
     updated: 'green',
     unupdated: 'orange',
+    unupdated_alxa: 'gold',
     waiting_update: 'blue',
     error: 'red',
     not_update: 'purple'
@@ -16,6 +17,7 @@ const TagUpdateStatus = ({ status }) => {
   const value = {
     updated: 'Atualizado',
     unupdated: 'Desatualizado',
+    unupdated_alxa: 'Desatualizado Alxa',
     waiting_update: 'Aguardando atualização',
     error: 'Erro ao atualizar',
     not_update: 'Não deve atualizar'
@@ -37,7 +39,7 @@ const TagStatus = ({ status }) => {
 
   return <Tag color={color}>{value}</Tag>
 }
-const columns = ({ handleClickEdit }) => [
+const columns = ({ handleClickEdit, handelSyncPrice }) => [
   {
     title: 'SKU',
     dataIndex: 'sku',
@@ -63,16 +65,56 @@ const columns = ({ handleClickEdit }) => [
     title: 'Preço',
     dataIndex: 'price',
     key: 'price',
-    render: (price) =>
-      price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    width: 170,
+    render: (price, { id }) => {
+      const [spin, setSpin] = useState(false)
+
+      return (
+        <>
+          {price.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          })}
+          <Tooltip title="Clique duas vezes para atualizar com o preço que está no mercado livre">
+            <Button
+              type="link"
+              onDoubleClick={() =>
+                handelSyncPrice({ setSpin, sync: 'price', id })
+              }>
+              <SyncOutlined spin={spin} />
+            </Button>
+          </Tooltip>
+        </>
+      )
+    },
     sorter: true
   },
   {
     title: 'Preço ML',
     dataIndex: 'price_ml',
+    width: 170,
     key: 'price_ml',
-    render: (price) =>
-      price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+    render: (price_ml, { id }) => {
+      const [spin, setSpin] = useState(false)
+
+      return (
+        <>
+          {price_ml.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+          })}
+          <Tooltip title="Clique duas vezes para atualizar com o preço que está no alxa">
+            <Button
+              type="link"
+              onDoubleClick={() =>
+                handelSyncPrice({ setSpin, sync: 'price_ml', id })
+              }>
+              <SyncOutlined spin={spin} />
+            </Button>
+          </Tooltip>
+        </>
+      )
+    },
     sorter: true
   },
   {
@@ -133,14 +175,15 @@ const AdList = ({
   handleClickEdit,
   loading,
   onChangeTable,
-  pagination
+  pagination,
+  handelSyncPrice
 }) => {
   return (
     <Table
-      scroll={{ x: 1500 }}
+      scroll={{ x: 1600 }}
       pagination={pagination}
       onChange={onChangeTable}
-      columns={columns({ handleClickEdit })}
+      columns={columns({ handleClickEdit, handelSyncPrice })}
       loading={loading}
       dataSource={datasource}
       expandable={{
