@@ -2,7 +2,13 @@ import React from 'react'
 import { Button, Col, Form, Input, InputNumber, Modal, Row } from 'antd'
 import { length, lt, pipe, split } from 'ramda'
 
-const ModalUpdateAds = ({ visible, form, handleClose, handleSubmit }) => {
+const ModalUpdateAds = ({
+  visible,
+  form,
+  handleClose,
+  handleSubmit,
+  loading
+}) => {
   return (
     <Modal
       visible={visible}
@@ -12,7 +18,11 @@ const ModalUpdateAds = ({ visible, form, handleClose, handleSubmit }) => {
         <Button key="cancel" onClick={handleClose}>
           Cancelar
         </Button>,
-        <Button key="submit" type="primary" onClick={() => form.submit()}>
+        <Button
+          key="submit"
+          type="primary"
+          loading={loading}
+          onClick={() => form.submit()}>
           Atualizar
         </Button>
       ]}>
