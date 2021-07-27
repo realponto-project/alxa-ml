@@ -32,7 +32,8 @@ const TagStatus = ({ status }) => {
     payment_required: 'red',
     under_review: 'orange',
     paused: 'blue',
-    closed: 'red'
+    closed: 'red',
+    inactive: 'default'
   }[status]
 
   const value = mlStatus[status]
