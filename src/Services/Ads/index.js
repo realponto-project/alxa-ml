@@ -12,6 +12,10 @@ const updateAd = async (id, values) => {
   return await axiosIntance.put(`/ml-ad/${id}`, values)
 }
 
+const syncPrice = async (id, values) => {
+  return await axiosIntance.put(`/ml-sync-price/${id}`, values)
+}
+
 const getCusmtomerById = async (id) => {
   return await axiosIntance.get(`/customers/${id}`)
 }
@@ -30,5 +34,6 @@ export {
   createCustomer,
   updateCustomer,
   updateAds,
-  updateAd
+  updateAd,
+  syncPrice
 }

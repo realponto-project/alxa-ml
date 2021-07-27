@@ -194,9 +194,10 @@ const mlStatus = {
 const updateStatus = {
   updated: 'Atualizado',
   unupdated: 'Desatualizado',
+  unupdated_alxa: 'Desatualizado Alxa',
   waiting_update: 'Aguardando atualização',
   error: 'Erro ao atualizar',
-  not_update: 'Não deve atualizar',
+  not_update: 'Não deve atualizar'
 }
 
 export {
