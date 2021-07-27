@@ -141,18 +141,21 @@ const Manager = ({ tokenFcm }) => {
 
   const handleSubmitUpdateAd = (values) => {
     const id = propOr('', 'id', adChoosed)
+    setLoading(true)
 
     updateAd(id, values)
       .then(() => {
         getAllAds()
         setModalUpdateAdsIsVisible(false)
         message.success('O anúncio foi atualizado com sucesso')
+        setLoading(false)
       })
       .catch((err) => {
         const causes = pathOr([], ['response', 'data', 'data', 'cause'], err)
         forEach((cause) => {
           message.error(cause.message)
         }, causes)
+        setLoading(false)
       })
   }
 

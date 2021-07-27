@@ -233,6 +233,7 @@ const Manager = ({
       <ModalUpdateAds
         visible={modalUpdateAdsIsVisible}
         form={formUpdateAds}
+        loading={loading}
         handleClose={closeModalUpdateAd}
         handleSubmit={handleSubmitUpdateAd}
       />
