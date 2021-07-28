@@ -1,8 +1,9 @@
 import React from 'react'
-import { Button, Table, Tag } from 'antd'
-import { mlStatus } from '../../../../utils/orderStatus'
+import { Button, Table, Tag, Tooltip } from 'antd'
 import { join } from 'ramda'
-import { AreaChartOutlined, EditOutlined } from '@ant-design/icons'
+import { AreaChartOutlined, BulbTwoTone, EditOutlined } from '@ant-design/icons'
+
+import { mlStatus } from '../../../../utils/orderStatus'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -37,7 +38,7 @@ const TagStatus = ({ status }) => {
 
   return <Tag color={color}>{value}</Tag>
 }
-const columns = ({ handleClickEdit, handleClickGraphc }) => [
+const columns = ({ handleClickEdit, handleClickGraphc, toggleActive }) => [
   {
     title: 'SKU',
     dataIndex: 'sku',
@@ -95,7 +96,7 @@ const columns = ({ handleClickEdit, handleClickGraphc }) => [
   {
     title: 'Gráfico',
     dataIndex: 'id',
-    key: 'id',
+    key: 'id-graphic',
     width: 100,
     align: 'center',
     render: (id) => (
@@ -105,15 +106,35 @@ const columns = ({ handleClickEdit, handleClickGraphc }) => [
     )
   },
   {
+    title: 'Ativo',
+    dataIndex: 'active',
+    key: 'active',
+    width: 100,
+    align: 'center',
+    render: (active, { id }) => (
+      <Tooltip title="Clique dua vezes para alterar">
+        <Button type="link">
+          <BulbTwoTone
+            twoToneColor={active ? '#52c41a' : '#b5b5b5'}
+            onDoubleClick={() => toggleActive(id)}
+            onClick={() => {}}
+          />
+        </Button>
+      </Tooltip>
+    )
+  },
+  {
     title: 'Editar',
-    // dataIndex: 'id',
-    // key: 'id',
+    key: 'id-edit',
     fixed: 'right',
     width: 100,
     align: 'center',
     render: (_, record) => (
-      <Button type="link">
-        <EditOutlined onClick={() => handleClickEdit(record)} />
+      <Button
+        disabled={!record.active}
+        type="link"
+        onClick={() => handleClickEdit(record)}>
+        <EditOutlined />
       </Button>
     )
   }
@@ -145,14 +166,15 @@ const AdList = ({
   handleClickGraphc,
   loading,
   onChangeTable,
-  pagination
+  pagination,
+  toggleActive
 }) => {
   return (
     <Table
-      scroll={{ x: 1500 }}
+      scroll={{ x: 1700 }}
       pagination={pagination}
       onChange={onChangeTable}
-      columns={columns({ handleClickEdit, handleClickGraphc })}
+      columns={columns({ handleClickEdit, handleClickGraphc, toggleActive })}
       loading={loading}
       dataSource={datasource}
       expandable={{

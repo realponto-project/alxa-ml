@@ -11,6 +11,7 @@ import {
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
 import { getAllChangePrice } from '../../../Services/ChangePrice'
+import { toogleActiveAd } from '../../../Services/ML'
 
 const Manager = ({ tokenFcm }) => {
   const [accounts, setAccounts] = useState([])
@@ -168,6 +169,16 @@ const Manager = ({ tokenFcm }) => {
     setModalGraphcIsVisible(true)
   }
 
+  const toggleActive = async (id) => {
+    setLoading(true)
+    try {
+      await toogleActiveAd(id)
+      await getAllAds()
+    } catch (err) {
+      setLoading(false)
+    }
+  }
+
   return (
     <ManagerContainer
       pagination={{ total, current: page, pageSize: limit }}
@@ -201,6 +212,7 @@ const Manager = ({ tokenFcm }) => {
       modalGraphcIsVisible={modalGraphcIsVisible}
       handelCancel={() => setModalGraphcIsVisible(false)}
       rowsChangePrice={rowsChangePrice}
+      toggleActive={toggleActive}
     />
   )
 }

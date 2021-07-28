@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Col, Form, Input, InputNumber, Modal, Row } from 'antd'
+import { Button, Col, Form, Input, InputNumber, Modal, Row, Switch } from 'antd'
 import { length, lt, pipe, split } from 'ramda'
 
 const ModalUpdateAds = ({ visible, form, handleClose, handleSubmit }) => {
