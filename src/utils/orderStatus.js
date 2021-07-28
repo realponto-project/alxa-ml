@@ -185,6 +185,7 @@ const parseStatusToType = {
 
 const mlStatus = {
   active: 'Ativo',
+  inactive: 'Inativo',
   payment_required: 'Pagamento requerido',
   under_review: 'Sob revisão',
   paused: 'Pausado',

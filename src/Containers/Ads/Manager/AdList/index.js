@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
 import { Button, Table, Tag, Tooltip } from 'antd'
-import { mlStatus } from '../../../../utils/orderStatus'
 import { join } from 'ramda'
-import { EditOutlined, SyncOutlined } from '@ant-design/icons'
+import {
+  AreaChartOutlined,
+  BulbTwoTone,
+  EditOutlined,
+  SyncOutlined
+} from '@ant-design/icons'
+
+import { mlStatus } from '../../../../utils/orderStatus'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -32,14 +38,20 @@ const TagStatus = ({ status }) => {
     payment_required: 'red',
     under_review: 'orange',
     paused: 'blue',
-    closed: 'red'
+    closed: 'red',
+    inactive: 'default'
   }[status]
 
   const value = mlStatus[status]
 
   return <Tag color={color}>{value}</Tag>
 }
-const columns = ({ handleClickEdit, handelSyncPrice }) => [
+const columns = ({
+  handleClickEdit,
+  handleClickGraphc,
+  toggleActive,
+  handleSyncPrice
+}) => [
   {
     title: 'SKU',
     dataIndex: 'sku',
@@ -66,7 +78,7 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
     dataIndex: 'price',
     key: 'price',
     width: 170,
-    render: (price, { id }) => {
+    render: (price, { id, price_ml }) => {
       const [spin, setSpin] = useState(false)
 
       return (
@@ -75,15 +87,17 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
             style: 'currency',
             currency: 'BRL'
           })}
-          <Tooltip title="Clique duas vezes para atualizar com o preço que está no mercado livre">
-            <Button
-              type="link"
-              onDoubleClick={() =>
-                handelSyncPrice({ setSpin, sync: 'price', id })
-              }>
-              <SyncOutlined spin={spin} />
-            </Button>
-          </Tooltip>
+          {price !== price_ml && (
+            <Tooltip title="Clique duas vezes para atualizar com o preço que está no mercado livre">
+              <Button
+                type="link"
+                onDoubleClick={() =>
+                  handleSyncPrice({ setSpin, sync: 'price', id })
+                }>
+                <SyncOutlined spin={spin} />
+              </Button>
+            </Tooltip>
+          )}
         </>
       )
     },
@@ -94,7 +108,7 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
     dataIndex: 'price_ml',
     width: 170,
     key: 'price_ml',
-    render: (price_ml, { id }) => {
+    render: (price_ml, { id, price, active }) => {
       const [spin, setSpin] = useState(false)
 
       return (
@@ -103,15 +117,18 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
             style: 'currency',
             currency: 'BRL'
           })}
-          <Tooltip title="Clique duas vezes para atualizar com o preço que está no alxa">
-            <Button
-              type="link"
-              onDoubleClick={() =>
-                handelSyncPrice({ setSpin, sync: 'price_ml', id })
-              }>
-              <SyncOutlined spin={spin} />
-            </Button>
-          </Tooltip>
+          {price !== price_ml && (
+            <Tooltip title="Clique duas vezes para atualizar com o preço que está no alxa">
+              <Button
+                disabled={!active}
+                type="link"
+                onDoubleClick={() =>
+                  handleSyncPrice({ setSpin, sync: 'price_ml', id })
+                }>
+                <SyncOutlined spin={spin} />
+              </Button>
+            </Tooltip>
+          )}
         </>
       )
     },
@@ -135,15 +152,47 @@ const columns = ({ handleClickEdit, handelSyncPrice }) => [
     render: (status) => <TagStatus status={status} />
   },
   {
-    title: 'Editar',
+    title: 'Gráfico',
     dataIndex: 'id',
-    key: 'id',
+    key: 'id-graphic',
+    width: 100,
+    align: 'center',
+    render: (id) => (
+      <Button type="link">
+        <AreaChartOutlined onClick={() => handleClickGraphc(id)} />
+      </Button>
+    )
+  },
+  {
+    title: 'Ativo',
+    dataIndex: 'active',
+    key: 'active',
+    width: 100,
+    align: 'center',
+    render: (active, { id }) => (
+      <Tooltip title="Clique dua vezes para alterar">
+        <Button type="link">
+          <BulbTwoTone
+            twoToneColor={active ? '#52c41a' : '#b5b5b5'}
+            onDoubleClick={() => toggleActive(id)}
+            onClick={() => {}}
+          />
+        </Button>
+      </Tooltip>
+    )
+  },
+  {
+    title: 'Editar',
+    key: 'id-edit',
     fixed: 'right',
     width: 100,
     align: 'center',
     render: (_, record) => (
-      <Button type="link">
-        <EditOutlined onClick={() => handleClickEdit(record)} />
+      <Button
+        disabled={!record.active}
+        type="link"
+        onClick={() => handleClickEdit(record)}>
+        <EditOutlined />
       </Button>
     )
   }
@@ -164,7 +213,6 @@ const expandedRowRender = (record) => {
     { title: 'Mensagem', dataIndex: 'message', key: 'message' }
   ]
 
-  console.log(record.logErrors)
   return (
     <Table columns={columns} dataSource={record.logErrors} pagination={false} />
   )
@@ -173,17 +221,24 @@ const expandedRowRender = (record) => {
 const AdList = ({
   datasource,
   handleClickEdit,
+  handleClickGraphc,
   loading,
   onChangeTable,
   pagination,
-  handelSyncPrice
+  toggleActive,
+  handleSyncPrice
 }) => {
   return (
     <Table
-      scroll={{ x: 1600 }}
+      scroll={{ x: 1800 }}
       pagination={pagination}
       onChange={onChangeTable}
-      columns={columns({ handleClickEdit, handelSyncPrice })}
+      columns={columns({
+        handleClickEdit,
+        handleClickGraphc,
+        toggleActive,
+        handleSyncPrice
+      })}
       loading={loading}
       dataSource={datasource}
       expandable={{

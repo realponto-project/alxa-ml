@@ -10,6 +10,8 @@ import {
   updateAdsByAccount
 } from '../../../Services/mercadoLibre'
 import { getAllCalcPrice } from '../../../Services/CalcPrice'
+import { getAllChangePrice } from '../../../Services/ChangePrice'
+import { toogleActiveAd } from '../../../Services/ML'
 
 const Manager = ({ tokenFcm }) => {
   const [accounts, setAccounts] = useState([])
@@ -26,11 +28,13 @@ const Manager = ({ tokenFcm }) => {
   const [total, setTotal] = useState(10)
   const [formSearch] = Form.useForm()
   const [formValues, setFormValues] = useState({})
+  const [modalGraphcIsVisible, setModalGraphcIsVisible] = useState(false)
   const [modalUpdateAdsIsVisible, setModalUpdateAdsIsVisible] = useState(false)
   const [modalUpdatePriceIsVisible, setModalUpdatePriceIsVisible] = useState(
     false
   )
   const [calcs, setCalcs] = useState([])
+  const [rowsChangePrice, setRowsChangePrice] = useState([])
   const [adChoosed, setAdChoosed] = useState()
 
   const getAllAds = async () => {
@@ -83,7 +87,6 @@ const Manager = ({ tokenFcm }) => {
   const handleClickExpand = () => setExpand(!expand)
 
   const handleClickEdit = async (record) => {
-    console.log('object', record)
     setAdChoosed(record)
     formUpdateAds.setFieldsValue(record)
     setModalUpdateAdsIsVisible(true)
@@ -139,22 +142,25 @@ const Manager = ({ tokenFcm }) => {
 
   const handleSubmitUpdateAd = (values) => {
     const id = propOr('', 'id', adChoosed)
+    setLoading(true)
 
     updateAd(id, values)
       .then(() => {
         getAllAds()
         setModalUpdateAdsIsVisible(false)
         message.success('O anúncio foi atualizado com sucesso')
+        setLoading(false)
       })
       .catch((err) => {
         const causes = pathOr([], ['response', 'data', 'data', 'cause'], err)
         forEach((cause) => {
           message.error(cause.message)
         }, causes)
+        setLoading(false)
       })
   }
 
-  const handelSyncPrice = async (values) => {
+  const handleSyncPrice = async (values) => {
     const { setSpin, id, sync } = values
 
     setSpin(true)
@@ -165,6 +171,28 @@ const Manager = ({ tokenFcm }) => {
     } catch (error) {
       setSpin(false)
       console.error(error)
+    }
+  }
+
+  const handleClickGraphc = async (mercadoLibreAdId) => {
+    try {
+      const { data } = await getAllChangePrice({ mercadoLibreAdId })
+
+      setRowsChangePrice(data)
+    } catch (error) {
+      console.error(error)
+    }
+
+    setModalGraphcIsVisible(true)
+  }
+
+  const toggleActive = async (id) => {
+    setLoading(true)
+    try {
+      await toogleActiveAd(id)
+      await getAllAds()
+    } catch (err) {
+      setLoading(false)
     }
   }
 
@@ -181,6 +209,7 @@ const Manager = ({ tokenFcm }) => {
       formSearch={formSearch}
       handleClearForm={handleClearForm}
       handleClickEdit={handleClickEdit}
+      handleClickGraphc={handleClickGraphc}
       handleClickExpand={handleClickExpand}
       handleSubmitForm={handleSubmitForm}
       loading={loading}
@@ -197,7 +226,11 @@ const Manager = ({ tokenFcm }) => {
       openModalUpdatePrice={() => setModalUpdatePriceIsVisible(true)}
       handleSubmitUpdatePrice={handleSubmitUpdatePrice}
       handleClickUpdate={handleClickUpdate}
-      handelSyncPrice={handelSyncPrice}
+      handleSyncPrice={handleSyncPrice}
+      modalGraphcIsVisible={modalGraphcIsVisible}
+      handelCancel={() => setModalGraphcIsVisible(false)}
+      rowsChangePrice={rowsChangePrice}
+      toggleActive={toggleActive}
     />
   )
 }
