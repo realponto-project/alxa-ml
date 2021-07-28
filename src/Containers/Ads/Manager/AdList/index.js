@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
 import { Button, Table, Tag, Tooltip } from 'antd'
 import { join } from 'ramda'
-import { AreaChartOutlined, EditOutlined, SyncOutlined } from '@ant-design/icons'
+import {
+  AreaChartOutlined,
+  BulbTwoTone,
+  EditOutlined,
+  SyncOutlined
+} from '@ant-design/icons'
 
 import { mlStatus } from '../../../../utils/orderStatus'
 
@@ -41,7 +46,12 @@ const TagStatus = ({ status }) => {
 
   return <Tag color={color}>{value}</Tag>
 }
-const columns = ({ handleClickEdit, handleClickGraphc, toggleActive, handleSyncPrice }) => [
+const columns = ({
+  handleClickEdit,
+  handleClickGraphc,
+  toggleActive,
+  handleSyncPrice
+}) => [
   {
     title: 'SKU',
     dataIndex: 'sku',
@@ -68,7 +78,7 @@ const columns = ({ handleClickEdit, handleClickGraphc, toggleActive, handleSyncP
     dataIndex: 'price',
     key: 'price',
     width: 170,
-    render: (price, { id }) => {
+    render: (price, { id, price_ml }) => {
       const [spin, setSpin] = useState(false)
 
       return (
@@ -77,15 +87,17 @@ const columns = ({ handleClickEdit, handleClickGraphc, toggleActive, handleSyncP
             style: 'currency',
             currency: 'BRL'
           })}
-          <Tooltip title="Clique duas vezes para atualizar com o preço que está no mercado livre">
-            <Button
-              type="link"
-              onDoubleClick={() =>
-                handleSyncPrice({ setSpin, sync: 'price', id })
-              }>
-              <SyncOutlined spin={spin} />
-            </Button>
-          </Tooltip>
+          {price !== price_ml && (
+            <Tooltip title="Clique duas vezes para atualizar com o preço que está no mercado livre">
+              <Button
+                type="link"
+                onDoubleClick={() =>
+                  handleSyncPrice({ setSpin, sync: 'price', id })
+                }>
+                <SyncOutlined spin={spin} />
+              </Button>
+            </Tooltip>
+          )}
         </>
       )
     },
@@ -96,7 +108,7 @@ const columns = ({ handleClickEdit, handleClickGraphc, toggleActive, handleSyncP
     dataIndex: 'price_ml',
     width: 170,
     key: 'price_ml',
-    render: (price_ml, { id }) => {
+    render: (price_ml, { id, price, active }) => {
       const [spin, setSpin] = useState(false)
 
       return (
@@ -105,15 +117,18 @@ const columns = ({ handleClickEdit, handleClickGraphc, toggleActive, handleSyncP
             style: 'currency',
             currency: 'BRL'
           })}
-          <Tooltip title="Clique duas vezes para atualizar com o preço que está no alxa">
-            <Button
-              type="link"
-              onDoubleClick={() =>
-                handleSyncPrice({ setSpin, sync: 'price_ml', id })
-              }>
-              <SyncOutlined spin={spin} />
-            </Button>
-          </Tooltip>
+          {price !== price_ml && (
+            <Tooltip title="Clique duas vezes para atualizar com o preço que está no alxa">
+              <Button
+                disabled={!active}
+                type="link"
+                onDoubleClick={() =>
+                  handleSyncPrice({ setSpin, sync: 'price_ml', id })
+                }>
+                <SyncOutlined spin={spin} />
+              </Button>
+            </Tooltip>
+          )}
         </>
       )
     },
@@ -215,10 +230,15 @@ const AdList = ({
 }) => {
   return (
     <Table
-      scroll={{ x: 1700 }}
+      scroll={{ x: 1800 }}
       pagination={pagination}
       onChange={onChangeTable}
-      columns={columns({ handleClickEdit, handleClickGraphc, toggleActive, handleSyncPrice })}
+      columns={columns({
+        handleClickEdit,
+        handleClickGraphc,
+        toggleActive,
+        handleSyncPrice
+      })}
       loading={loading}
       dataSource={datasource}
       expandable={{
