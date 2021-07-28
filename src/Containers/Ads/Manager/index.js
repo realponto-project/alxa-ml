@@ -8,7 +8,8 @@ import {
   Typography,
   Select,
   Form,
-  Modal
+  Modal,
+  Checkbox
 } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 import { filter, keys, map, pipe, prepend, propEq } from 'ramda'
@@ -46,6 +47,7 @@ const Manager = ({
   handleSyncPrice,
   modalGraphcIsVisible,
   handelCancel,
+  toggleActive,
   rowsChangePrice
 }) => {
   useEffect(() => {
@@ -131,11 +133,12 @@ const Manager = ({
           <Form
             layout="vertical"
             form={formSearch}
+            onFinish={handleSubmitForm}
             initialValues={{
               status: '',
-              update_status: ''
-            }}
-            onFinish={handleSubmitForm}>
+              update_status: '',
+              active: [true, false]
+            }}>
             <Row gutter={[8, 8]}>
               <Col span={8}>
                 <Form.Item name="account" label="Conta">
@@ -182,7 +185,7 @@ const Manager = ({
                 </Form.Item>
               </Col>
 
-              <Col span={18}>
+              <Col span={12}>
                 <Form.Item name="searchGlobal">
                   <Input
                     allowClear
@@ -192,6 +195,18 @@ const Manager = ({
                   />
                 </Form.Item>
               </Col>
+
+              <Col span={6}>
+                <Row justify="end">
+                  <Form.Item name="active">
+                    <Checkbox.Group>
+                      <Checkbox value={true}>Ativo</Checkbox>
+                      <Checkbox value={false}>Inativo</Checkbox>
+                    </Checkbox.Group>
+                  </Form.Item>
+                </Row>
+              </Col>
+
               <Col span={6} style={{ textAlign: 'right' }}>
                 <Form.Item>
                   <Button
@@ -226,6 +241,7 @@ const Manager = ({
             datasource={source}
             handleClickEdit={handleClickEdit}
             handleClickGraphc={handleClickGraphc}
+            toggleActive={toggleActive}
             loading={loading}
             pagination={pagination}
           />
