@@ -1,5 +1,12 @@
 import React from 'react'
 import { Button, Table, Tag } from 'antd'
+import { join } from 'ramda'
+import {
+  AreaChartOutlined,
+  EditOutlined,
+  
+} from '@ant-design/icons'
+
 import { mlStatus } from '../../../../utils/orderStatus'
 import { join } from 'ramda'
 import { AreaChartOutlined, EditOutlined } from '@ant-design/icons'
@@ -131,7 +138,14 @@ const expandedRowRender = (record) => {
       key: 'references',
       render: join('\n')
     },
-    { title: 'Mensagem', dataIndex: 'messagePt', key: 'messagePt' }
+    { 
+      title: 'Mensagem',
+      dataIndex: 'message',
+      key: 'message' ,
+      render: (_, { messagePt, message}) => {
+      return messagePt || message
+      }
+    }
   ]
 
   return (
@@ -164,3 +178,4 @@ const AdList = ({
 }
 
 export default AdList
+ 
