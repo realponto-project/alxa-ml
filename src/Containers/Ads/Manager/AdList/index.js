@@ -1,15 +1,9 @@
 import React from 'react'
-import { Button, Table, Tag } from 'antd'
 import { join } from 'ramda'
-import {
-  AreaChartOutlined,
-  EditOutlined,
-  
-} from '@ant-design/icons'
+import { Button, Table, Tag } from 'antd'
+import { AreaChartOutlined, EditOutlined } from '@ant-design/icons'
 
 import { mlStatus } from '../../../../utils/orderStatus'
-import { join } from 'ramda'
-import { AreaChartOutlined, EditOutlined } from '@ant-design/icons'
 
 const TagUpdateStatus = ({ status }) => {
   const color = {
@@ -138,12 +132,12 @@ const expandedRowRender = (record) => {
       key: 'references',
       render: join('\n')
     },
-    { 
+    {
       title: 'Mensagem',
       dataIndex: 'message',
-      key: 'message' ,
-      render: (_, { messagePt, message}) => {
-      return messagePt || message
+      key: 'message',
+      render: (_, { messagePt, message }) => {
+        return messagePt || message
       }
     }
   ]
