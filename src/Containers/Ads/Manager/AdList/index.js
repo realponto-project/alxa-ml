@@ -178,4 +178,3 @@ const AdList = ({
 }
 
 export default AdList
- 
