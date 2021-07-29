@@ -210,7 +210,14 @@ const expandedRowRender = (record) => {
       key: 'references',
       render: join('\n')
     },
-    { title: 'Mensagem', dataIndex: 'messagePt', key: 'messagePt' }
+    { 
+      title: 'Mensagem',
+      dataIndex: 'message',
+      key: 'message' ,
+      render: (_, { messagePt, message}) => {
+      return messagePt || message
+      }
+    }
   ]
 
   return (
@@ -250,3 +257,4 @@ const AdList = ({
 }
 
 export default AdList
+ 
