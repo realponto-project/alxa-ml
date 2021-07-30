@@ -1,4 +1,5 @@
 import AdsManager from '../Pages/Ads/Manager'
+import WorkersManager from '../Pages/Workers/Manager'
 import UpdateMyPassword from '../Pages/UpdateMyPassword'
 import MyTeam from '../Pages/MyTeam'
 import Onboarding from '../Pages/Onboarding'
@@ -9,7 +10,7 @@ const RootRoutes = [
   {
     component: Onboarding,
     path: '/user/onboarding',
-    exact: true,
+    exact: true
   },
   {
     component: MyInfo,
@@ -40,12 +41,19 @@ const RootRoutes = [
     goBack: false
   },
   {
+    component: WorkersManager,
+    title: 'WORKERS',
+    path: '/logged/workers/manager',
+    exact: true,
+    goBack: false
+  },
+  {
     component: Accounts,
     title: 'CONTAS VINCULADAS',
     path: '/logged/account/manager',
     exact: true,
     goBack: false
-  },
+  }
 ]
 
 export default RootRoutes
