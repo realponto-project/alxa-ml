@@ -8,9 +8,7 @@ import LogoPlus from '../../Assets/alxa-plus.svg'
 import AdSide from '../../Components/AdSide'
 import styles from './style.module.css'
 
-import {
-  DotChartOutlined,
-} from '@ant-design/icons'
+import { ClockCircleOutlined, DotChartOutlined } from '@ant-design/icons'
 
 const { Sider, Content } = Layout
 const menuItems = [
@@ -19,12 +17,24 @@ const menuItems = [
     label: 'Anúncios',
     key: '/logged/ads/manager'
   },
+  {
+    icon: <ClockCircleOutlined />,
+    label: 'Workers',
+    key: '/logged/workers/manager'
+  }
 ]
 
-const LayoutComponent = ({ children, history, location, company, subscription }) => {
+const LayoutComponent = ({
+  children,
+  history,
+  location,
+  company,
+  subscription
+}) => {
   const goTo = ({ key }) => history.push(key)
   const companyName = pathOr('', ['name'], company)
-  const parseCompanyName = companyName.length > 22 ? `${companyName.substr(0, 22)}...` : companyName
+  const parseCompanyName =
+    companyName.length > 22 ? `${companyName.substr(0, 22)}...` : companyName
 
   return (
     <Layout className={styles.noPrint}>
@@ -46,8 +56,7 @@ const LayoutComponent = ({ children, history, location, company, subscription })
             padding: '24px 0 24px 24px',
             margin: 'auto'
           }}
-          className={styles.noPrint}
-        >
+          className={styles.noPrint}>
           <Image
             className={styles.noPrint}
             style={{
@@ -58,17 +67,16 @@ const LayoutComponent = ({ children, history, location, company, subscription })
             }}
             preview={false}
             width={220}
-            src={subscription.status === 'free' ? Logo : LogoPlus }
+            src={subscription.status === 'free' ? Logo : LogoPlus}
           />
           <p
             className={styles.noPrint}
             style={{
               color: '#454550',
               fontSize: '18px',
-              fontWeight: 'bold',
+              fontWeight: 'bold'
             }}
-            title={parseCompanyName}
-          >
+            title={parseCompanyName}>
             {parseCompanyName}
           </p>
         </div>
@@ -79,15 +87,19 @@ const LayoutComponent = ({ children, history, location, company, subscription })
           defaultSelectedKeys={['1']}
           style={{ width: 256 }}>
           {menuItems.map((menuItem) => (
-            <Menu.Item className={styles.noPrint} {...menuItem} key={menuItem.key} onClick={goTo}>
+            <Menu.Item
+              className={styles.noPrint}
+              {...menuItem}
+              key={menuItem.key}
+              onClick={goTo}>
               {menuItem.label}
             </Menu.Item>
           ))}
         </Menu>
         {location.pathname.replace('/logged/', '') !== 'plans' &&
-          subscription && subscription.status === 'free' 
-          && 
-          <AdSide className={styles.noPrint} />}
+          subscription?.status === 'free' && (
+            <AdSide className={styles.noPrint} />
+        )}
       </Sider>
       <Layout>
         <Content
@@ -105,7 +117,7 @@ const LayoutComponent = ({ children, history, location, company, subscription })
 
 const mapStateToProps = ({ company, subscription }) => ({
   company,
-  subscription,
+  subscription
 })
 
 const enhanced = compose(connect(mapStateToProps), withRouter)
