@@ -21,7 +21,7 @@ const translateProperty = (propName) => {
     active: 'Ativo:',
     completed: 'Completo',
     failed: 'Falhou',
-    delayed: 'Atrado',
+    delayed: 'Atrasado',
     paused: 'Pausado'
   }[propName]
 
@@ -29,8 +29,6 @@ const translateProperty = (propName) => {
 }
 
 const Manager = ({ queues }) => {
-  console.log('queues', queues)
-
   return (
     <Row gutter={[8, 16]}>
       {map((key) => {
