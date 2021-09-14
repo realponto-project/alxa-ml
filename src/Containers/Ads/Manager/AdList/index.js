@@ -74,7 +74,29 @@ const columns = ({
     sorter: true
   },
   {
-    title: 'Preço',
+    title: 'Preço de custo',
+    dataIndex: 'costPrice',
+    width: 170,
+    key: 'costPrice',
+    render: (costPrice) =>
+      costPrice?.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      })
+  },
+  {
+    title: 'Frete',
+    dataIndex: 'shippingCost',
+    width: 170,
+    key: 'shippingCost',
+    render: (shippingCost) =>
+      shippingCost?.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      })
+  },
+  {
+    title: 'Preço final',
     dataIndex: 'price',
     key: 'price',
     width: 170,
@@ -237,7 +259,7 @@ const AdList = ({
 }) => {
   return (
     <Table
-      scroll={{ x: 1800 }}
+      scroll={{ x: 2140 }}
       pagination={pagination}
       onChange={onChangeTable}
       columns={columns({

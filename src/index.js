@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import 'moment/locale/pt-br'
 import ptBR from 'antd/lib/locale/pt_BR'
 import { Empty, ConfigProvider, Image } from 'antd'
 import { HashRouter, BrowserRouter } from 'react-router-dom'
